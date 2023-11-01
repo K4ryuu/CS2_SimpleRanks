@@ -229,8 +229,8 @@ namespace K4ryuuSimpleRanks
 				using var reader = command.ExecuteReader();
 				while (reader.Read())
 				{
-					string rankName = reader.GetString("rank");
-					int points = reader.GetInt32("points");
+					string rankName = reader.IsDBNull(reader.GetOrdinal("rank")) ? "None" : reader.GetString("rank");
+					int points = reader.GetInt32(reader.GetOrdinal("points"));
 
 					if (ranks.ContainsKey(rankName))
 						return (colorMapping[ranks[rankName].Color.ToLower()], rankName);
