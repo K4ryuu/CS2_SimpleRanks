@@ -1,0 +1,11 @@
+{
+    "Silver": {
+        "Exp": 250, // From this amount of experience, the player is Silver
+        "Color": "Default" // Color code for the rank. Find color names here: https://github.com/roflmuffin/CounterStrikeSharp/blob/main/managed/CounterStrikeSharp.API/Modules/Utils/ChatColors.cs
+    },
+    "Gold": {
+        "Exp": 1000,
+        "Color": "Red"
+    }
+    // You can add as many as you want
+}
