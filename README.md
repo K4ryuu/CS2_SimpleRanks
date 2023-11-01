@@ -9,7 +9,11 @@
         ·
         <a href="https://github.com/K4ryuu/CS2_SimpleRanks/issues">Request Feature</a>
     </b>
-    <br/>
+    <h3>Credits</h2>
+    <b>
+        <a href="https://github.com/WidovV">WidovV</a> Database and CFG help
+    </b>
+    <br/><br/>
     <b>Do not forget to give a ⭐ on the projects!</b><br/><br/>
     <b>Love the project? Please consider donating to help it improve!</b><br/>
     <b>PayPal:</b> k4ryuu@icloud.com
