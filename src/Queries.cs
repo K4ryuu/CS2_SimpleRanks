@@ -150,7 +150,8 @@ namespace K4ryuuSimpleRanks
 				while (reader.Read())
 				{
 					playerPoints = reader.GetInt32("points");
-					currentRank = reader.GetString("rank");
+					currentRank = reader.IsDBNull(reader.GetOrdinal("rank")) ? "None" : reader.GetString("rank");
+
 
 					if (currentRank == null)
 						currentRank = "None";
