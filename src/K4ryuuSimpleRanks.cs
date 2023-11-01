@@ -194,22 +194,26 @@ namespace K4ryuuSimpleRanks
 			{
 				CsTeam winnerTeam = (CsTeam)@event.Winner;
 
-				for (int playerIndex = 1; playerIndex <= Server.MaxPlayers; playerIndex++)
+				for (int playerIndex = 0; playerIndex <= Server.MaxPlayers; playerIndex++)
 				{
 					CCSPlayerController playerController = new CCSPlayerController(NativeAPI.GetEntityFromIndex(playerIndex));
-					CsTeam playerTeam = (CsTeam)playerController.TeamNum;
 
-					if (playerController != null && playerTeam != CsTeam.None && playerTeam != CsTeam.Spectator)
+					if (playerController.IsValid)
 					{
-						if (playerTeam == winnerTeam)
+						CsTeam playerTeam = (CsTeam)playerController.TeamNum;
+
+						if (playerTeam != CsTeam.None && playerTeam != CsTeam.Spectator)
 						{
-							Queries.AddPoints(playerController, CFG.config.RoundWinPoints, ranks);
-							playerController.PrintToChat($" {ChatColors.LightRed}{CFG.config.ChatPrefix} {ChatColors.Lime}You have gained {CFG.config.RoundWinPoints} XP for winning the round.");
-						}
-						else
-						{
-							Queries.RemovePoints(playerController, CFG.config.RoundLosePoints, ranks);
-							playerController.PrintToChat($" {ChatColors.LightRed}{CFG.config.ChatPrefix} {ChatColors.LightRed}You have lost {CFG.config.RoundLosePoints} XP for losing the round.");
+							if (playerTeam == winnerTeam)
+							{
+								Queries.AddPoints(playerController, CFG.config.RoundWinPoints, ranks);
+								playerController.PrintToChat($" {ChatColors.LightRed}{CFG.config.ChatPrefix} {ChatColors.Lime}You have gained {CFG.config.RoundWinPoints} XP for winning the round.");
+							}
+							else
+							{
+								Queries.RemovePoints(playerController, CFG.config.RoundLosePoints, ranks);
+								playerController.PrintToChat($" {ChatColors.LightRed}{CFG.config.ChatPrefix} {ChatColors.LightRed}You have lost {CFG.config.RoundLosePoints} XP for losing the round.");
+							}
 						}
 					}
 				}
