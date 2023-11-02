@@ -35,9 +35,7 @@ namespace K4ryuuSimpleRanks
 			try
 			{
 				using var connection = Database.GetConnection();
-				connection.Open();
 				CreateTable(connection);
-				connection.Close();
 				return true;
 			}
 			catch (Exception ex)
@@ -90,9 +88,7 @@ namespace K4ryuuSimpleRanks
 				command.Parameters.AddWithValue("@steamId", steamID);
 				command.Parameters.AddWithValue("@points", points);
 
-				connection.Open();
 				command.ExecuteNonQuery();
-				connection.Close();
 
 				UpdatePlayerRank(playerController, ranks);
 			}
@@ -126,9 +122,7 @@ namespace K4ryuuSimpleRanks
 				command.Parameters.AddWithValue("@steamId", steamID);
 				command.Parameters.AddWithValue("@points", points);
 
-				connection.Open();
 				command.ExecuteNonQuery();
-				connection.Close();
 
 				UpdatePlayerRank(playerController, ranks);
 			}
@@ -156,8 +150,6 @@ namespace K4ryuuSimpleRanks
 				using var command = connection.CreateCommand();
 				command.CommandText = "SELECT `points`, `rank` FROM `k4ranks` WHERE `steam_id` = @steamId;";
 				command.Parameters.AddWithValue("@steamId", playerController.SteamID.ToString());
-
-				connection.Open();
 
 				using var reader = command.ExecuteReader();
 				while (reader.Read())
@@ -213,9 +205,7 @@ namespace K4ryuuSimpleRanks
 					command.Parameters.AddWithValue("@steamId", playerController.SteamID.ToString());
 					command.Parameters.AddWithValue("@rank", newRank);
 
-					connection.Open();
 					command.ExecuteNonQuery();
-					connection.Close();
 
 				}
 				catch (Exception ex)
@@ -242,8 +232,6 @@ namespace K4ryuuSimpleRanks
 				using var command = connection.CreateCommand();
 				command.CommandText = "SELECT `rank`, `points` FROM `k4ranks` WHERE `steam_id` = @steamId;";
 				command.Parameters.AddWithValue("@steamId", playerController.SteamID.ToString());
-
-				connection.Open();
 
 				using var reader = command.ExecuteReader();
 				while (reader.Read())
@@ -311,8 +299,6 @@ namespace K4ryuuSimpleRanks
 				using var command = connection.CreateCommand();
 				command.CommandText = "SELECT `points` FROM `k4ranks` WHERE `steam_id` = @steamId;";
 				command.Parameters.AddWithValue("@steamId", steamId);
-
-				connection.Open();
 
 				using var reader = command.ExecuteReader();
 				while (reader.Read())
