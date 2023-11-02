@@ -1,4 +1,5 @@
 using MySqlConnector;
+using System.Data;
 
 namespace K4ryuuSimpleRanks
 {
@@ -13,9 +14,18 @@ namespace K4ryuuSimpleRanks
 			Database = CFG.config.DatabaseName
 		};
 
+		private static MySqlConnection? globalConnection;
+
 		public static MySqlConnection GetConnection()
 		{
-			return new MySqlConnection(connection.ConnectionString);
+			// If the global connection is null or closed, create a new connection and open it.
+			if (globalConnection == null || globalConnection.State == ConnectionState.Closed)
+			{
+				globalConnection = new MySqlConnection(connection.ConnectionString);
+				globalConnection.Open();
+			}
+
+			return globalConnection;
 		}
 	}
 }

@@ -57,14 +57,12 @@ namespace K4ryuuSimpleRanks
 			try
 			{
 				using var connection = Database.GetConnection();
-
 				using var command = connection.CreateCommand();
+
 				command.CommandText = "INSERT INTO `k4ranks` (`steam_id`, `points`) SELECT @steamId, 0 FROM DUAL WHERE NOT EXISTS(SELECT `steam_id` FROM `k4ranks` WHERE `steam_id` = @steamId) LIMIT 1; ";
 				command.Parameters.AddWithValue("@steamId", steamId);
 
-				connection.Open();
 				command.ExecuteNonQuery();
-				connection.Close();
 			}
 			catch (Exception ex)
 			{
@@ -74,6 +72,11 @@ namespace K4ryuuSimpleRanks
 
 		public static void AddPoints(CCSPlayerController playerController, int points, Dictionary<string, Rank> ranks)
 		{
+			if (!DatabaseConnected)
+			{
+				return;
+			}
+
 			try
 			{
 				using var connection = Database.GetConnection();
@@ -101,6 +104,11 @@ namespace K4ryuuSimpleRanks
 
 		public static void RemovePoints(CCSPlayerController playerController, int points, Dictionary<string, Rank> ranks)
 		{
+			if (!DatabaseConnected)
+			{
+				return;
+			}
+
 			try
 			{
 				using var connection = Database.GetConnection();
@@ -132,6 +140,11 @@ namespace K4ryuuSimpleRanks
 
 		private static void UpdatePlayerRank(CCSPlayerController playerController, Dictionary<string, Rank> ranks)
 		{
+			if (!DatabaseConnected)
+			{
+				return;
+			}
+
 			// Retrieve the current points of the player
 			int playerPoints = 0;
 			string currentRank = "None";
@@ -217,6 +230,11 @@ namespace K4ryuuSimpleRanks
 			string suitableRank = "None";
 			string colorCode = "Default";
 
+			if (!DatabaseConnected)
+			{
+				return (colorMapping[colorCode.ToLower()], suitableRank);
+			}
+
 			try
 			{
 				using var connection = Database.GetConnection();
@@ -260,6 +278,11 @@ namespace K4ryuuSimpleRanks
 
 		private static void CreateTable(MySqlConnection connection)
 		{
+			if (!DatabaseConnected)
+			{
+				return;
+			}
+
 			try
 			{
 				using var command = connection.CreateCommand();
@@ -276,6 +299,11 @@ namespace K4ryuuSimpleRanks
 
 		public static int GetPoints(string steamId)
 		{
+			if (!DatabaseConnected)
+			{
+				return 0;
+			}
+
 			try
 			{
 				using var connection = Database.GetConnection();
