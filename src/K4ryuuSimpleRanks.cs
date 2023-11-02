@@ -198,7 +198,7 @@ namespace K4ryuuSimpleRanks
 				{
 					CCSPlayerController playerController = new CCSPlayerController(NativeAPI.GetEntityFromIndex(playerIndex));
 
-					if (playerController.IsValid)
+					if (playerController.IsValid && !playerController.IsBot)
 					{
 						CsTeam playerTeam = (CsTeam)playerController.TeamNum;
 
@@ -256,7 +256,7 @@ namespace K4ryuuSimpleRanks
 					}
 				}
 
-				if (!bool.Parse(configValues["PointsForBots"]) && victimController.IsBot)
+				if (!CFG.config.PointsForBots && victimController.IsBot)
 					return HookResult.Continue;
 
 				// Increase killer points
