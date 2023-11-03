@@ -16,22 +16,27 @@ namespace K4ryuuSimpleRanks
 
 	public class SimpleRanks : BasePlugin
 	{
-		private Dictionary<string, string> configValues = new Dictionary<string, string>();
 		private Dictionary<int, (int killStreak, DateTime lastKillTime)> playerKillStreaks = new Dictionary<int, (int, DateTime)>();
-		public Dictionary<string, Rank> ranks = new Dictionary<string, Rank>();
+		public static Dictionary<string, Rank> ranks = new Dictionary<string, Rank>();
+		public static string Directory = string.Empty;
 		public override string ModuleName => "Simple Ranks";
-		public override string ModuleVersion => "v1.0.0";
+		public override string ModuleVersion => "v1.1.0";
+		public override string ModuleAuthor => "K4ryuu";
 
 		public override void Load(bool hotReload)
 		{
+			Directory = ModuleDirectory;
+
 			for (int i = 0; i <= Server.MaxPlayers; i++)
 			{
 				playerKillStreaks[i] = (0, DateTime.MinValue);
 
 				if (hotReload)
 				{
-					CCSPlayerController targetController = new CCSPlayerController(NativeAPI.GetEntityFromIndex(i));
-					Queries.InsertUser(targetController.SteamID.ToString());
+					CCSPlayerController targetController = Utilities.GetPlayerFromIndex(i);
+
+					if (targetController.IsValidPlayer())
+						_ = Queries.InsertUserAsync(targetController.SteamID.ToString());
 				}
 			}
 
@@ -40,7 +45,7 @@ namespace K4ryuuSimpleRanks
 			LoadRanksFromConfig();
 			SetupGameEvents();
 
-			Log($"{ModuleName} [{ModuleVersion}] by K4ryuu has been loaded.");
+			Log($"{ModuleName} [{ModuleVersion}] by {ModuleAuthor} has been loaded.");
 		}
 
 		private void LoadRanksFromConfig()
@@ -106,9 +111,9 @@ namespace K4ryuuSimpleRanks
 			{
 				CCSPlayerController playerController = @event.Userid;
 
-				if (playerController.IsValid && !playerController.IsBot)
+				if (playerController.IsValidPlayer() && CFG.config.HostageRescuePoints > 0)
 				{
-					Queries.AddPoints(playerController, CFG.config.HostageRescuePoints, ranks);
+					_ = Queries.AddPointsAsync(playerController, CFG.config.HostageRescuePoints);
 					playerController.PrintToChat($" {ChatColors.LightRed}{CFG.config.ChatPrefix} {ChatColors.Lime}You have gained {CFG.config.HostageRescuePoints} XP for rescuing a hostage.");
 				}
 
@@ -118,9 +123,9 @@ namespace K4ryuuSimpleRanks
 			{
 				CCSPlayerController playerController = @event.Userid;
 
-				if (playerController.IsValid && !playerController.IsBot)
+				if (playerController.IsValidPlayer() && CFG.config.HostageKillPoints > 0)
 				{
-					Queries.RemovePoints(playerController, CFG.config.HostageKillPoints, ranks);
+					_ = Queries.RemovePointsAsync(playerController, CFG.config.HostageKillPoints);
 					playerController.PrintToChat($" {ChatColors.LightRed}{CFG.config.ChatPrefix} {ChatColors.LightRed}You have lost {CFG.config.HostageKillPoints} XP for killing the hostage.");
 				}
 
@@ -130,9 +135,9 @@ namespace K4ryuuSimpleRanks
 			{
 				CCSPlayerController playerController = @event.Userid;
 
-				if (playerController.IsValid && !playerController.IsBot)
+				if (playerController.IsValidPlayer() && CFG.config.HostageHurtPoints > 0)
 				{
-					Queries.RemovePoints(playerController, CFG.config.HostageHurtPoints, ranks);
+					_ = Queries.RemovePointsAsync(playerController, CFG.config.HostageHurtPoints);
 					playerController.PrintToChat($" {ChatColors.LightRed}{CFG.config.ChatPrefix} {ChatColors.LightRed}You have lost {CFG.config.HostageHurtPoints} XP for hurting the hostage.");
 				}
 
@@ -142,9 +147,9 @@ namespace K4ryuuSimpleRanks
 			{
 				CCSPlayerController playerController = @event.Userid;
 
-				if (playerController.IsValid && !playerController.IsBot)
+				if (playerController.IsValidPlayer() && CFG.config.BombDropPoints > 0)
 				{
-					Queries.RemovePoints(playerController, CFG.config.BombDropPoints, ranks);
+					_ = Queries.RemovePointsAsync(playerController, CFG.config.BombDropPoints);
 
 					Server.NextFrame(() =>
 					{
@@ -158,9 +163,9 @@ namespace K4ryuuSimpleRanks
 			{
 				CCSPlayerController playerController = @event.Userid;
 
-				if (playerController.IsValid && !playerController.IsBot)
+				if (playerController.IsValidPlayer() && CFG.config.BombPickupPoints > 0)
 				{
-					Queries.AddPoints(playerController, CFG.config.BombPickupPoints, ranks);
+					_ = Queries.AddPointsAsync(playerController, CFG.config.BombPickupPoints);
 					playerController.PrintToChat($" {ChatColors.LightRed}{CFG.config.ChatPrefix} {ChatColors.Lime}You have gained {CFG.config.BombPickupPoints} XP for picking up the bomb.");
 				}
 
@@ -170,9 +175,9 @@ namespace K4ryuuSimpleRanks
 			{
 				CCSPlayerController playerController = @event.Userid;
 
-				if (playerController.IsValid && !playerController.IsBot)
+				if (playerController.IsValidPlayer() && CFG.config.DefusePoints > 0)
 				{
-					Queries.AddPoints(playerController, CFG.config.DefusePoints, ranks);
+					_ = Queries.AddPointsAsync(playerController, CFG.config.DefusePoints);
 					playerController.PrintToChat($" {ChatColors.LightRed}{CFG.config.ChatPrefix} {ChatColors.Lime}You have gained {CFG.config.DefusePoints} XP for defusing the bomb.");
 				}
 
@@ -182,9 +187,9 @@ namespace K4ryuuSimpleRanks
 			{
 				CCSPlayerController playerController = @event.Userid;
 
-				if (playerController.IsValid && !playerController.IsBot)
+				if (playerController.IsValidPlayer() && CFG.config.MVPPoints > 0)
 				{
-					Queries.AddPoints(playerController, CFG.config.MVPPoints, ranks);
+					_ = Queries.AddPointsAsync(playerController, CFG.config.MVPPoints);
 					playerController.PrintToChat($" {ChatColors.LightRed}{CFG.config.ChatPrefix} {ChatColors.Lime}You have gained {CFG.config.MVPPoints} XP for being the MVP.");
 				}
 
@@ -196,9 +201,9 @@ namespace K4ryuuSimpleRanks
 
 				for (int playerIndex = 0; playerIndex <= Server.MaxPlayers; playerIndex++)
 				{
-					CCSPlayerController playerController = new CCSPlayerController(NativeAPI.GetEntityFromIndex(playerIndex));
+					CCSPlayerController playerController = Utilities.GetPlayerFromUserid(playerIndex);
 
-					if (playerController.IsValid && !playerController.IsBot)
+					if (playerController.IsValidPlayer())
 					{
 						CsTeam playerTeam = (CsTeam)playerController.TeamNum;
 
@@ -206,12 +211,15 @@ namespace K4ryuuSimpleRanks
 						{
 							if (playerTeam == winnerTeam)
 							{
-								Queries.AddPoints(playerController, CFG.config.RoundWinPoints, ranks);
-								playerController.PrintToChat($" {ChatColors.LightRed}{CFG.config.ChatPrefix} {ChatColors.Lime}You have gained {CFG.config.RoundWinPoints} XP for winning the round.");
+								if (CFG.config.RoundWinPoints > 0)
+								{
+									_ = Queries.AddPointsAsync(playerController, CFG.config.RoundWinPoints);
+									playerController.PrintToChat($" {ChatColors.LightRed}{CFG.config.ChatPrefix} {ChatColors.Lime}You have gained {CFG.config.RoundWinPoints} XP for winning the round.");
+								}
 							}
-							else
+							else if (CFG.config.RoundLosePoints > 0)
 							{
-								Queries.RemovePoints(playerController, CFG.config.RoundLosePoints, ranks);
+								_ = Queries.RemovePointsAsync(playerController, CFG.config.RoundLosePoints);
 								playerController.PrintToChat($" {ChatColors.LightRed}{CFG.config.ChatPrefix} {ChatColors.LightRed}You have lost {CFG.config.RoundLosePoints} XP for losing the round.");
 							}
 						}
@@ -224,9 +232,9 @@ namespace K4ryuuSimpleRanks
 			{
 				CCSPlayerController playerController = @event.Userid;
 
-				if (playerController.IsValid && !playerController.IsBot)
+				if (playerController.IsValidPlayer() && CFG.config.PlantPoints > 0)
 				{
-					Queries.AddPoints(playerController, CFG.config.PlantPoints, ranks);
+					_ = Queries.AddPointsAsync(playerController, CFG.config.PlantPoints);
 					playerController.PrintToChat($" {ChatColors.LightRed}{CFG.config.ChatPrefix} {ChatColors.Lime}You have gained {CFG.config.PlantPoints} XP for planting the bomb.");
 				}
 
@@ -246,68 +254,78 @@ namespace K4ryuuSimpleRanks
 				{
 					if (victimController.UserId == killerController.UserId)
 					{
-						Queries.RemovePoints(victimController, CFG.config.SuicidePoints, ranks);
-						victimController.PrintToChat($" {ChatColors.LightRed}{CFG.config.ChatPrefix} {ChatColors.LightRed}You have lost {CFG.config.SuicidePoints} XP for suicide.");
+						if (CFG.config.SuicidePoints > 0)
+						{
+							_ = Queries.RemovePointsAsync(victimController, CFG.config.SuicidePoints);
+							victimController.PrintToChat($" {ChatColors.LightRed}{CFG.config.ChatPrefix} {ChatColors.LightRed}You have lost {CFG.config.SuicidePoints} XP for suicide.");
+						}
 					}
 					else
 					{
-						Queries.RemovePoints(victimController, CFG.config.DeathPoints, ranks);
-						victimController.PrintToChat($" {ChatColors.LightRed}{CFG.config.ChatPrefix} {ChatColors.LightRed}You have lost {CFG.config.DeathPoints} XP for dying.");
+						if (CFG.config.DeathPoints > 0)
+						{
+							_ = Queries.RemovePointsAsync(victimController, CFG.config.DeathPoints);
+							victimController.PrintToChat($" {ChatColors.LightRed}{CFG.config.ChatPrefix} {ChatColors.LightRed}You have lost {CFG.config.DeathPoints} XP for dying.");
+						}
 					}
 				}
 
-				if (!CFG.config.PointsForBots && victimController.IsBot)
+				if ((!CFG.config.PointsForBots && victimController.IsBot) || victimController.UserId == killerController.UserId)
 					return HookResult.Continue;
 
 				// Increase killer points
-				if (killerController.IsValid && !killerController.IsBot)
+				if (killerController.IsValidPlayer())
 				{
 					if (killerController.TeamNum == victimController.TeamNum)
 					{
-						Queries.RemovePoints(killerController, CFG.config.TeamKillPoints, ranks);
-						killerController.PrintToChat($" {ChatColors.LightRed}{CFG.config.ChatPrefix} {ChatColors.LightRed}You have lost {CFG.config.TeamKillPoints} XP for killing a teammate.");
-
+						if (CFG.config.TeamKillPoints > 0)
+						{
+							_ = Queries.RemovePointsAsync(killerController, CFG.config.TeamKillPoints);
+							killerController.PrintToChat($" {ChatColors.LightRed}{CFG.config.ChatPrefix} {ChatColors.LightRed}You have lost {CFG.config.TeamKillPoints} XP for killing a teammate.");
+						}
 					}
 					else
 					{
-						Queries.AddPoints(killerController, CFG.config.KillPoints, ranks);
+						int pointChange = 0;
+
+						pointChange += CFG.config.KillPoints;
 						killerController.PrintToChat($" {ChatColors.LightRed}{CFG.config.ChatPrefix} {ChatColors.Lime}You have gained {CFG.config.KillPoints} XP for killing an enemy.");
 
-						if (@event.Headshot)
+						if (@event.Headshot && CFG.config.HeadshotPoints > 0)
 						{
-							Queries.AddPoints(killerController, CFG.config.HeadshotPoints, ranks);
+							pointChange += CFG.config.HeadshotPoints;
 							killerController.PrintToChat($" {ChatColors.LightRed}{CFG.config.ChatPrefix} {ChatColors.Lime}You have gained {CFG.config.HeadshotPoints} XP for headshot.");
 						}
 
 						int penetrateCount = @event.Penetrated;
-						if (penetrateCount > 0)
+						if (penetrateCount > 0 && CFG.config.PenetratedPoints > 0)
 						{
 							int calculatedPoints = @event.Penetrated * CFG.config.PenetratedPoints;
-							Queries.AddPoints(killerController, calculatedPoints, ranks);
+							pointChange += calculatedPoints;
 							killerController.PrintToChat($" {ChatColors.LightRed}{CFG.config.ChatPrefix} {ChatColors.Lime}You have gained {calculatedPoints} XP for NoScope {penetrateCount} objects before killing the target.");
 						}
 
-						if (@event.Noscope)
+						if (@event.Noscope && CFG.config.NoScopePoints > 0)
 						{
-							Queries.AddPoints(killerController, CFG.config.NoScopePoints, ranks);
+							pointChange += CFG.config.NoScopePoints;
 							killerController.PrintToChat($" {ChatColors.LightRed}{CFG.config.ChatPrefix} {ChatColors.Lime}You have gained {CFG.config.NoScopePoints} XP for NoScope.");
 						}
 
-						if (@event.Thrusmoke)
+						if (@event.Thrusmoke && CFG.config.ThrusmokePoints > 0)
 						{
-							Queries.AddPoints(killerController, CFG.config.ThrusmokePoints, ranks);
+							pointChange += CFG.config.ThrusmokePoints;
 							killerController.PrintToChat($" {ChatColors.LightRed}{CFG.config.ChatPrefix} {ChatColors.Lime}You have gained {CFG.config.ThrusmokePoints} XP killing thru smoke.");
 						}
 
-						if (@event.Attackerblind)
+						if (@event.Attackerblind && CFG.config.BlindKillPoints > 0)
 						{
-							Queries.AddPoints(killerController, CFG.config.BlindKillPoints, ranks);
+							pointChange += CFG.config.BlindKillPoints;
 							killerController.PrintToChat($" {ChatColors.LightRed}{CFG.config.ChatPrefix} {ChatColors.Lime}You have gained {CFG.config.BlindKillPoints} XP for killing while being flashed.");
 						}
 
-						if (@event.Distance >= float.Parse(configValues["LongDistance"]))
+						if (@event.Distance >= CFG.config.LongDistance && CFG.config.LongDistanceKillPoints > 0)
 						{
-							Queries.AddPoints(killerController, CFG.config.LongDistanceKillPoints, ranks);
+							pointChange += CFG.config.LongDistanceKillPoints;
 							killerController.PrintToChat($" {ChatColors.LightRed}{CFG.config.ChatPrefix} {ChatColors.Lime}You have gained {CFG.config.LongDistanceKillPoints} XP for long distance kill.");
 						}
 
@@ -378,7 +396,7 @@ namespace K4ryuuSimpleRanks
 
 								if (points > 0)
 								{
-									Queries.AddPoints(killerController, points, ranks);
+									pointChange += points;
 									killerController.PrintToChat($" {ChatColors.LightRed}{CFG.config.ChatPrefix} {ChatColors.Lime}You have gained {points} XP for a {killStreakMessage}!");
 								}
 							}
@@ -387,6 +405,9 @@ namespace K4ryuuSimpleRanks
 								// No kill streak, reset the count
 								ResetKillStreak(attackerIndex);
 							}
+
+							if (pointChange > 0)
+								_ = Queries.AddPointsAsync(killerController, pointChange);
 						}
 					}
 				}
@@ -398,14 +419,22 @@ namespace K4ryuuSimpleRanks
 
 					if (assisterIndex != -1)
 					{
-						Queries.AddPoints(assisterController, CFG.config.AssistPoints, ranks);
-						assisterController.PrintToChat($" {ChatColors.LightRed}{CFG.config.ChatPrefix} {ChatColors.Lime}You have gained {CFG.config.AssistPoints} XP for assisting in a kill.");
+						int pointChange = 0;
 
-						if (@event.Assistedflash)
+						if (CFG.config.AssistPoints > 0)
 						{
-							Queries.AddPoints(assisterController, CFG.config.AsssistFlashPoints, ranks);
+							pointChange += CFG.config.AssistPoints;
+							assisterController.PrintToChat($" {ChatColors.LightRed}{CFG.config.ChatPrefix} {ChatColors.Lime}You have gained {CFG.config.AssistPoints} XP for assisting in a kill.");
+						}
+
+						if (@event.Assistedflash && CFG.config.AsssistFlashPoints > 0)
+						{
+							pointChange += CFG.config.AsssistFlashPoints;
 							assisterController.PrintToChat($" {ChatColors.LightRed}{CFG.config.ChatPrefix} {ChatColors.Lime}You have gained {CFG.config.AsssistFlashPoints} XP for assisting with a flash.");
 						}
+
+						if (pointChange > 0)
+							_ = Queries.AddPointsAsync(assisterController, pointChange);
 					}
 				}
 
@@ -420,24 +449,23 @@ namespace K4ryuuSimpleRanks
 
 				player.PrintToChat($" {ChatColors.LightRed}{CFG.config.ChatPrefix} {ChatColors.White}The server is using {ChatColors.Gold}SimpleRanks {ChatColors.White}plugin. Type {ChatColors.Red}!rank {ChatColors.White}to get more information!");
 
-
 				return HookResult.Continue;
 			});
 		}
 
 		[ConsoleCommand("rank", "Check the current rank and points")]
-		public void OnCommandCheckRank(CCSPlayerController? player, CommandInfo command)
+		public async void OnCommandCheckRank(CCSPlayerController? player, CommandInfo command)
 		{
 			if (player == null || player.PlayerPawn == null || !player.PlayerPawn.IsValid)
 				return;
 
 			string steamId = player.SteamID.ToString();
 
-			int playerVariable = Queries.GetPoints(steamId);
+			int playerVariable = await Queries.GetPointsAsync(steamId);
 
-			var (colorCode, rankName) = Queries.GetRankInfo(player, ranks);
+			var (colorCode, rankName) = await Queries.GetRankInfoAsync(player);
 
-			Server.PrintToChatAll($" {ChatColors.LightRed}{CFG.config.ChatPrefix} {colorCode}{player.PlayerName} {ChatColors.White}has {ChatColors.Red}{playerVariable} {ChatColors.White}points and is currently {colorCode}{rankName}");
+			Utilities.ReplyToCommand(player, $" {ChatColors.LightRed}{CFG.config.ChatPrefix} {colorCode}{player.PlayerName} {ChatColors.White}has {ChatColors.Red}{playerVariable} {ChatColors.White}points and is currently {colorCode}{rankName}");
 			return;
 		}
 
@@ -446,20 +474,17 @@ namespace K4ryuuSimpleRanks
 		{
 			CCSPlayerController playerController = @event.Userid;
 
-			if (playerController != null)
+			if (playerController.IsValidPlayer())
 			{
-				int playerIndex = playerController.UserId ?? -1;
-
-				if (playerIndex != -1)
-					Queries.InsertUser(playerController.SteamID.ToString());
+				_ = Queries.InsertUserAsync(playerController.SteamID.ToString());
 			}
 
 			return HookResult.Continue;
 		}
 
-		public void Log(string message)
+		public static void Log(string message)
 		{
-			string logFile = Path.Join(ModuleDirectory, "logs.txt");
+			string logFile = Path.Join(Directory, "logs.txt");
 			using (StreamWriter writer = File.AppendText(logFile))
 			{
 				writer.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " " + message);
