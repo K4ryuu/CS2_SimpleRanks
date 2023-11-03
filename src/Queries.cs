@@ -32,6 +32,24 @@ namespace K4ryuuSimpleRanks
 			{ "lightred", '\u000f' }
 		};
 
+		public static async Task CreateTable()
+		{
+			using MySqlConnection connection = Database.GetConnection();
+			try
+			{
+				await connection.OpenAsync();
+				await ExecuteNonQueryAsync(@"CREATE TABLE IF NOT EXISTS `k4ranks` (`id` INT AUTO_INCREMENT PRIMARY KEY, `steam_id` VARCHAR(255) NOT NULL, `rank` VARCHAR(255) DEFAULT NULL, `points` INT NOT NULL, UNIQUE (`steam_id`));");
+			}
+			catch (MySqlException ex)
+			{
+				LogError("Error executing query: " + ex.Message);
+			}
+			finally
+			{
+				connection.Close();
+			}
+		}
+
 		public static async Task InsertUserAsync(string steamId)
 		{
 			using MySqlConnection connection = Database.GetConnection();

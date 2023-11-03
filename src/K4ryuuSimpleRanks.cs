@@ -45,6 +45,8 @@ namespace K4ryuuSimpleRanks
 			LoadRanksFromConfig();
 			SetupGameEvents();
 
+			_ = Queries.CreateTable();
+
 			Log($"{ModuleName} [{ModuleVersion}] by {ModuleAuthor} has been loaded.");
 		}
 
