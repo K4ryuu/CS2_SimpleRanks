@@ -25,7 +25,7 @@ internal class CFG
 		}
 
 		if (config != null && config.ChatPrefix != null)
-			config.ChatPrefix = ModifiedChatPrefix(config.ChatPrefix);
+			config.ChatPrefix = ModifyColorValue(config.ChatPrefix);
 	}
 
 	private static void CreateAndWriteFile(string path)
@@ -95,17 +95,17 @@ internal class CFG
 	}
 
 	// Essential method for replacing chat colors from the config file, the method can be used for other things as well.
-	private string ModifiedChatPrefix(string msg)
+	private string ModifyColorValue(string msg)
 	{
-		if (msg.Contains("{"))
+		if (msg.Contains('{'))
 		{
 			string modifiedValue = msg;
 			foreach (FieldInfo field in typeof(ChatColors).GetFields())
 			{
 				string pattern = $"{{{field.Name}}}";
-				if (msg.Contains(pattern))
+				if (msg.Contains(pattern, StringComparison.OrdinalIgnoreCase))
 				{
-					modifiedValue = modifiedValue.Replace(pattern, field.GetValue(null).ToString());
+					modifiedValue = modifiedValue.Replace(pattern, field.GetValue(null).ToString(), StringComparison.OrdinalIgnoreCase);
 				}
 			}
 			return modifiedValue;
