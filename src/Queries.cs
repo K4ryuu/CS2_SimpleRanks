@@ -72,7 +72,7 @@ namespace K4ryuuSimpleRanks
 			}
 		}
 
-		public static async Task<List<(string PlayerName, int Points, string Rank)>> GetTopPlayersAsync()
+		public static async Task<List<(string PlayerName, int Points, string Rank)>?> GetTopPlayersAsync()
 		{
 			List<(string PlayerName, int Points, string Rank)> topPlayers = new List<(string PlayerName, int Points, string Rank)>();
 
@@ -88,7 +88,11 @@ namespace K4ryuuSimpleRanks
 
 				while (await reader.ReadAsync())
 				{
-					topPlayers.Add((reader.GetString("name"), reader.GetInt32("points"), reader.GetString("rank")));
+					string name = reader.IsDBNull(reader.GetOrdinal("name")) ? "Unknown" : reader.GetString(reader.GetOrdinal("name"));
+					int points = reader.IsDBNull(reader.GetOrdinal("points")) ? 0 : reader.GetInt32(reader.GetOrdinal("points"));
+					string rank = reader.IsDBNull(reader.GetOrdinal("rank")) ? "None" : reader.GetString(reader.GetOrdinal("rank"));
+
+					topPlayers.Add((name, points, rank));
 				}
 			}
 			catch (MySqlException ex)
@@ -100,7 +104,7 @@ namespace K4ryuuSimpleRanks
 				connection.Close();
 			}
 
-			return topPlayers;
+			return null;
 		}
 
 		public static async Task AddPointsAsync(CCSPlayerController playerController, int points)

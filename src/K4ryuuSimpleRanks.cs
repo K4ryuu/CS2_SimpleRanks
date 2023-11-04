@@ -477,9 +477,9 @@ namespace K4ryuuSimpleRanks
 			if (player == null || player.PlayerPawn == null || !player.PlayerPawn.IsValid)
 				return;
 
-			List<(string PlayerName, int Points, string Rank)> topPlayers = await Queries.GetTopPlayersAsync();
+			List<(string PlayerName, int Points, string Rank)>? topPlayers = await Queries.GetTopPlayersAsync();
 
-			if (topPlayers.Count > 0)
+			if (topPlayers != null && topPlayers.Count > 0)
 			{
 				string topPlayersMessage = $"Top 5 Players:\n";
 
