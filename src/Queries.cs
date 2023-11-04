@@ -38,7 +38,7 @@ namespace K4ryuuSimpleRanks
 			try
 			{
 				await connection.OpenAsync();
-				await ExecuteNonQueryAsync(@"CREATE TABLE IF NOT EXISTS `k4ranks` (`id` INT AUTO_INCREMENT PRIMARY KEY, `steam_id` VARCHAR(255) NOT NULL, `rank` VARCHAR(255) DEFAULT NULL, `points` INT NOT NULL, UNIQUE (`steam_id`));");
+				await ExecuteNonQueryAsync(@"CREATE TABLE IF NOT EXISTS `k4ranks` (`id` INT AUTO_INCREMENT PRIMARY KEY, `steam_id` VARCHAR(255) NOT NULL, `name` VARCHAR(255) DEFAULT NULL, `rank` VARCHAR(255) DEFAULT NULL, `points` INT NOT NULL, UNIQUE (`steam_id`));");
 			}
 			catch (MySqlException ex)
 			{
@@ -50,20 +50,17 @@ namespace K4ryuuSimpleRanks
 			}
 		}
 
-		public static async Task InsertUserAsync(string steamId)
+		public static async Task InsertUserAsync(CCSPlayerController playerController)
 		{
 			using MySqlConnection connection = Database.GetConnection();
 			try
 			{
 				await connection.OpenAsync();
 
-				if (await PlayerExistsAsync(steamId))
-				{
-					return;
-				}
-
-				await ExecuteNonQueryAsync("INSERT INTO `k4ranks` (`steam_id`, `points`) SELECT @steamId, 0 FROM DUAL WHERE NOT EXISTS(SELECT `steam_id` FROM `k4ranks` WHERE `steam_id` = @steamId) LIMIT 1;",
-					new MySqlParameter("@steamId", steamId));
+				await ExecuteNonQueryAsync("INSERT INTO `k4ranks` (`steam_id`, `points`, `name`) " +
+									"VALUES (@steamId, 0, @playerName) ON DUPLICATE KEY UPDATE `name` = @playerName;",
+									new MySqlParameter("@steamId", playerController.SteamID.ToString()),
+									new MySqlParameter("@playerName", playerController.PlayerName));
 			}
 			catch (MySqlException ex)
 			{
@@ -73,6 +70,37 @@ namespace K4ryuuSimpleRanks
 			{
 				connection.Close();
 			}
+		}
+
+		public static async Task<List<(string PlayerName, int Points, string Rank)>> GetTopPlayersAsync()
+		{
+			List<(string PlayerName, int Points, string Rank)> topPlayers = new List<(string PlayerName, int Points, string Rank)>();
+
+			using MySqlConnection connection = Database.GetConnection();
+			try
+			{
+				await connection.OpenAsync();
+
+				using MySqlCommand command = connection.CreateCommand();
+				command.CommandText = "SELECT `points`, `name`, `rank` FROM `k4ranks` ORDER BY `points` DESC LIMIT 5;";
+
+				using MySqlDataReader reader = await command.ExecuteReaderAsync();
+
+				while (await reader.ReadAsync())
+				{
+					topPlayers.Add((reader.GetString("name"), reader.GetInt32("points"), reader.GetString("rank")));
+				}
+			}
+			catch (MySqlException ex)
+			{
+				LogError("Error executing query: " + ex.Message);
+			}
+			finally
+			{
+				connection.Close();
+			}
+
+			return topPlayers;
 		}
 
 		public static async Task AddPointsAsync(CCSPlayerController playerController, int points)
@@ -131,10 +159,7 @@ namespace K4ryuuSimpleRanks
 		{
 			string steamId = playerController.SteamID.ToString();
 
-			if (!await PlayerExistsAsync(steamId))
-			{
-				return;
-			}
+			await InsertUserAsync(playerController);
 
 			using MySqlConnection connection = Database.GetConnection();
 			try
@@ -289,33 +314,6 @@ namespace K4ryuuSimpleRanks
 			string change = newPoints > oldPoints ? "promoted" : (newPoints < oldPoints ? "demoted" : "");
 
 			return change;
-		}
-
-		public static async Task<bool> PlayerExistsAsync(string steamId)
-		{
-			using MySqlConnection connection = Database.GetConnection();
-			try
-			{
-				await connection.OpenAsync();
-
-				using MySqlCommand command = connection.CreateCommand();
-
-				command.CommandText = "SELECT 1 FROM `k4ranks` WHERE `steam_id` = @steamId LIMIT 1;";
-				command.Parameters.AddWithValue("@steamId", steamId);
-
-				using MySqlDataReader reader = await command.ExecuteReaderAsync();
-				return await reader.ReadAsync();
-			}
-			catch (MySqlException ex)
-			{
-				LogError("Error executing query: " + ex.Message);
-			}
-			finally
-			{
-				connection.Close();
-			}
-
-			return false;
 		}
 
 		public static async Task<int> GetPointsAsync(string steamId)

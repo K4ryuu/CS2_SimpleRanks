@@ -42,6 +42,7 @@ internal class CFG
 		{
 			ChatPrefix = "[SimpleRanks]",
 			DisableSpawnMessage = false,
+			FFAMode = false,
 			DatabaseHost = "localhost",
 			DatabasePort = 3306,
 			DatabaseUser = "root",
@@ -119,6 +120,7 @@ internal class Config
 {
 	public string? ChatPrefix { get; set; }
 	public bool DisableSpawnMessage { get; set; }
+	public bool FFAMode { get; set; }
 	public string? DatabaseHost { get; set; }
 	public uint DatabasePort { get; set; }
 	public string? DatabaseUser { get; set; }
