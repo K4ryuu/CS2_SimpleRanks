@@ -88,9 +88,9 @@ namespace K4ryuuSimpleRanks
 
 				while (await reader.ReadAsync())
 				{
-					string name = reader.IsDBNull(reader.GetOrdinal("name")) ? "Unknown" : reader.GetString(reader.GetOrdinal("name"));
-					int points = reader.IsDBNull(reader.GetOrdinal("points")) ? 0 : reader.GetInt32(reader.GetOrdinal("points"));
-					string rank = reader.IsDBNull(reader.GetOrdinal("rank")) ? "None" : reader.GetString(reader.GetOrdinal("rank"));
+					string name = reader.IsDBNull(reader.GetOrdinal("name")) ? "Unknown" : reader.GetString("name");
+					int points = reader.IsDBNull(reader.GetOrdinal("points")) ? 0 : reader.GetInt32("points");
+					string rank = reader.IsDBNull(reader.GetOrdinal("rank")) ? "None" : reader.GetString("rank");
 
 					topPlayers.Add((name, points, rank));
 				}
@@ -104,7 +104,7 @@ namespace K4ryuuSimpleRanks
 				connection.Close();
 			}
 
-			return null;
+			return topPlayers;
 		}
 
 		public static async Task AddPointsAsync(CCSPlayerController playerController, int points)
@@ -163,7 +163,8 @@ namespace K4ryuuSimpleRanks
 		{
 			string steamId = playerController.SteamID.ToString();
 
-			await InsertUserAsync(playerController);
+			if (playerController.IsValidPlayer())
+				await InsertUserAsync(playerController);
 
 			using MySqlConnection connection = Database.GetConnection();
 			try

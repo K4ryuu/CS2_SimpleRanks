@@ -20,7 +20,7 @@ namespace K4ryuuSimpleRanks
 		public static Dictionary<string, Rank> ranks = new Dictionary<string, Rank>();
 		public static string Directory = string.Empty;
 		public override string ModuleName => "Simple Ranks";
-		public override string ModuleVersion => "v1.2.0";
+		public override string ModuleVersion => "v1.2.1";
 		public override string ModuleAuthor => "K4ryuu";
 
 		public override void Load(bool hotReload)
@@ -481,18 +481,16 @@ namespace K4ryuuSimpleRanks
 
 			if (topPlayers != null && topPlayers.Count > 0)
 			{
-				string topPlayersMessage = $"Top 5 Players:\n";
+				player.PrintToChat($" {CFG.config.ChatPrefix} Top 5 Players:");
 
 				for (int i = 0; i < topPlayers.Count; i++)
 				{
-					topPlayersMessage += $"{i + 1}. [{topPlayers[i].Rank}] {topPlayers[i].PlayerName} - {topPlayers[i].Points} points\n";
+					player.PrintToChat($" {ChatColors.Gold}{i + 1}. {ChatColors.Blue}[{topPlayers[i].Rank}] {ChatColors.Gold}{topPlayers[i].PlayerName} - {ChatColors.Blue}{topPlayers[i].Points} points");
 				}
-
-				Utilities.ReplyToCommand(player, $"{CFG.config.ChatPrefix} {topPlayersMessage}");
 			}
 			else
 			{
-				Utilities.ReplyToCommand(player, $"{CFG.config.ChatPrefix} No players found in the top 5.");
+				player.PrintToChat($" {CFG.config.ChatPrefix} No players found in the top 5.");
 			}
 		}
 
