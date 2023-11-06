@@ -188,6 +188,9 @@ namespace K4ryuuSimpleRanks
 
 				string newRank = DetermineNewRankAsync(playerPoints);
 
+				if (CFG.config.ScoreboardRanks)
+					playerController.Clan = newRank;
+
 				if (newRank != currentRank)
 				{
 					await UpdatePlayerRankInDatabaseAsync(playerController, newRank);
