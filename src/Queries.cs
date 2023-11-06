@@ -161,10 +161,10 @@ namespace K4ryuuSimpleRanks
 		}
 		private static async Task UpdatePlayerRankAsync(CCSPlayerController playerController)
 		{
-			string steamId = playerController.SteamID.ToString();
+			if (!playerController.IsValidPlayer())
+				return;
 
-			if (playerController.IsValidPlayer())
-				await InsertUserAsync(playerController);
+			await InsertUserAsync(playerController);
 
 			using MySqlConnection connection = Database.GetConnection();
 			try
@@ -173,7 +173,7 @@ namespace K4ryuuSimpleRanks
 
 				using MySqlCommand command = connection.CreateCommand();
 				command.CommandText = "SELECT `points`, `rank` FROM `k4ranks` WHERE `steam_id` = @steamId;";
-				command.Parameters.AddWithValue("@steamId", steamId);
+				command.Parameters.AddWithValue("@steamId", playerController.SteamID.ToString());
 
 				using MySqlDataReader reader = await command.ExecuteReaderAsync();
 
@@ -189,7 +189,7 @@ namespace K4ryuuSimpleRanks
 				string newRank = DetermineNewRankAsync(playerPoints);
 
 				if (CFG.config.ScoreboardRanks)
-					playerController.Clan = newRank;
+					playerController.Clan = $"[{newRank}]";
 
 				if (newRank != currentRank)
 				{
