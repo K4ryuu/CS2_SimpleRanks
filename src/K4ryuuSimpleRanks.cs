@@ -62,7 +62,7 @@ namespace K4ryuuSimpleRanks
 					using (StreamReader sr = new StreamReader(fs))
 					{
 						string jsonContent = Regex.Replace(sr.ReadToEnd(), @"/\*(.*?)\*/|//(.*)", string.Empty, RegexOptions.Multiline);
-						ranks = JsonConvert.DeserializeObject<Dictionary<string, Rank>>(jsonContent);
+						ranks = JsonConvert.DeserializeObject<Dictionary<string, Rank>>(jsonContent)!;
 					}
 				}
 				else

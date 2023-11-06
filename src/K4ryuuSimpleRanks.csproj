@@ -10,7 +10,11 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="MySqlConnector" Version="2.2.7" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <Reference Include="CounterStrikeSharp.API" />
+    <Reference Include="CounterStrikeSharp.API">
+      <HintPath>..\..\GlobalUsage\CounterStrikeSharp.API.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\GlobalUsage\Newtonsoft.Json.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>

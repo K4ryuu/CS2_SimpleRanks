@@ -21,7 +21,7 @@ internal class CFG
 		using (StreamReader sr = new StreamReader(fs))
 		{
 			// Deserialize the JSON from the file and load the configuration.
-			config = JsonSerializer.Deserialize<Config>(sr.ReadToEnd());
+			config = JsonSerializer.Deserialize<Config>(sr.ReadToEnd())!;
 		}
 
 		if (config != null && config.ChatPrefix != null)
@@ -43,6 +43,7 @@ internal class CFG
 			ChatPrefix = "[SimpleRanks]",
 			DisableSpawnMessage = false,
 			FFAMode = false,
+			ScoreboardRanks = true,
 			DatabaseHost = "localhost",
 			DatabasePort = 3306,
 			DatabaseUser = "root",
@@ -106,7 +107,7 @@ internal class CFG
 				string pattern = $"{{{field.Name}}}";
 				if (msg.Contains(pattern, StringComparison.OrdinalIgnoreCase))
 				{
-					modifiedValue = modifiedValue.Replace(pattern, field.GetValue(null).ToString(), StringComparison.OrdinalIgnoreCase);
+					modifiedValue = modifiedValue.Replace(pattern, field.GetValue(null)!.ToString(), StringComparison.OrdinalIgnoreCase);
 				}
 			}
 			return modifiedValue;
@@ -121,6 +122,7 @@ internal class Config
 	public string? ChatPrefix { get; set; }
 	public bool DisableSpawnMessage { get; set; }
 	public bool FFAMode { get; set; }
+	public bool ScoreboardRanks { get; set; }
 	public string? DatabaseHost { get; set; }
 	public uint DatabasePort { get; set; }
 	public string? DatabaseUser { get; set; }
