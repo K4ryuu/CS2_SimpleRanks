@@ -42,6 +42,7 @@ internal class CFG
 		{
 			ChatPrefix = "[SimpleRanks]",
 			DisableSpawnMessage = false,
+			MinPlayers = 4,
 			WarmupPoints = false,
 			FFAMode = false,
 			ScoreboardRanks = true,
@@ -123,7 +124,7 @@ internal class Config
 	public string? ChatPrefix { get; set; }
 	public bool DisableSpawnMessage { get; set; }
 	public bool WarmupPoints { get; set; }
-
+	public int MinPlayers { get; set; }
 	public bool FFAMode { get; set; }
 	public bool ScoreboardRanks { get; set; }
 	public string? DatabaseHost { get; set; }

@@ -113,7 +113,7 @@ namespace K4ryuuSimpleRanks
 			{
 				CCSPlayerController playerController = @event.Userid;
 
-				if (playerController.IsValidPlayer() && CFG.config.HostageRescuePoints > 0 && (!K4ryuu.GameRules().WarmupPeriod || CFG.config.WarmupPoints))
+				if (playerController.IsValidPlayer() && CFG.config.HostageRescuePoints > 0 && IsPointsAllowed())
 				{
 					_ = Queries.AddPointsAsync(playerController, CFG.config.HostageRescuePoints);
 					playerController.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.Lime}You have gained {CFG.config.HostageRescuePoints} XP for rescuing a hostage.");
@@ -125,7 +125,7 @@ namespace K4ryuuSimpleRanks
 			{
 				CCSPlayerController playerController = @event.Userid;
 
-				if (playerController.IsValidPlayer() && CFG.config.HostageKillPoints > 0 && (!K4ryuu.GameRules().WarmupPeriod || CFG.config.WarmupPoints))
+				if (playerController.IsValidPlayer() && CFG.config.HostageKillPoints > 0 && IsPointsAllowed())
 				{
 					_ = Queries.RemovePointsAsync(playerController, CFG.config.HostageKillPoints);
 					playerController.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.LightRed}You have lost {CFG.config.HostageKillPoints} XP for killing the hostage.");
@@ -137,7 +137,7 @@ namespace K4ryuuSimpleRanks
 			{
 				CCSPlayerController playerController = @event.Userid;
 
-				if (playerController.IsValidPlayer() && CFG.config.HostageHurtPoints > 0 && (!K4ryuu.GameRules().WarmupPeriod || CFG.config.WarmupPoints))
+				if (playerController.IsValidPlayer() && CFG.config.HostageHurtPoints > 0 && IsPointsAllowed())
 				{
 					_ = Queries.RemovePointsAsync(playerController, CFG.config.HostageHurtPoints);
 					playerController.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.LightRed}You have lost {CFG.config.HostageHurtPoints} XP for hurting the hostage.");
@@ -149,7 +149,7 @@ namespace K4ryuuSimpleRanks
 			{
 				CCSPlayerController playerController = @event.Userid;
 
-				if (playerController.IsValidPlayer() && CFG.config.BombDropPoints > 0 && (!K4ryuu.GameRules().WarmupPeriod || CFG.config.WarmupPoints))
+				if (playerController.IsValidPlayer() && CFG.config.BombDropPoints > 0 && IsPointsAllowed())
 				{
 					_ = Queries.RemovePointsAsync(playerController, CFG.config.BombDropPoints);
 
@@ -165,7 +165,7 @@ namespace K4ryuuSimpleRanks
 			{
 				CCSPlayerController playerController = @event.Userid;
 
-				if (playerController.IsValidPlayer() && CFG.config.BombPickupPoints > 0 && (!K4ryuu.GameRules().WarmupPeriod || CFG.config.WarmupPoints))
+				if (playerController.IsValidPlayer() && CFG.config.BombPickupPoints > 0 && IsPointsAllowed())
 				{
 					_ = Queries.AddPointsAsync(playerController, CFG.config.BombPickupPoints);
 					playerController.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.Lime}You have gained {CFG.config.BombPickupPoints} XP for picking up the bomb.");
@@ -177,7 +177,7 @@ namespace K4ryuuSimpleRanks
 			{
 				CCSPlayerController playerController = @event.Userid;
 
-				if (playerController.IsValidPlayer() && CFG.config.DefusePoints > 0 && (!K4ryuu.GameRules().WarmupPeriod || CFG.config.WarmupPoints))
+				if (playerController.IsValidPlayer() && CFG.config.DefusePoints > 0 && IsPointsAllowed())
 				{
 					_ = Queries.AddPointsAsync(playerController, CFG.config.DefusePoints);
 					playerController.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.Lime}You have gained {CFG.config.DefusePoints} XP for defusing the bomb.");
@@ -189,7 +189,7 @@ namespace K4ryuuSimpleRanks
 			{
 				CCSPlayerController playerController = @event.Userid;
 
-				if (playerController.IsValidPlayer() && CFG.config.MVPPoints > 0 && (!K4ryuu.GameRules().WarmupPeriod || CFG.config.WarmupPoints))
+				if (playerController.IsValidPlayer() && CFG.config.MVPPoints > 0 && IsPointsAllowed())
 				{
 					_ = Queries.AddPointsAsync(playerController, CFG.config.MVPPoints);
 					playerController.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.Lime}You have gained {CFG.config.MVPPoints} XP for being the MVP.");
@@ -201,7 +201,7 @@ namespace K4ryuuSimpleRanks
 			{
 				CsTeam winnerTeam = (CsTeam)@event.Winner;
 
-				if (K4ryuu.GameRules().WarmupPeriod && !CFG.config.WarmupPoints)
+				if (!IsPointsAllowed())
 					return HookResult.Continue;
 
 				for (int playerIndex = 0; playerIndex <= Server.MaxPlayers; playerIndex++)
@@ -237,7 +237,7 @@ namespace K4ryuuSimpleRanks
 			{
 				CCSPlayerController playerController = @event.Userid;
 
-				if (playerController.IsValidPlayer() && CFG.config.PlantPoints > 0 && (!K4ryuu.GameRules().WarmupPeriod || CFG.config.WarmupPoints))
+				if (playerController.IsValidPlayer() && CFG.config.PlantPoints > 0 && IsPointsAllowed())
 				{
 					_ = Queries.AddPointsAsync(playerController, CFG.config.PlantPoints);
 					playerController.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.Lime}You have gained {CFG.config.PlantPoints} XP for planting the bomb.");
@@ -247,7 +247,7 @@ namespace K4ryuuSimpleRanks
 			});
 			RegisterEventHandler<EventPlayerDeath>((@event, info) =>
 			{
-				if (K4ryuu.GameRules().WarmupPeriod && !CFG.config.WarmupPoints)
+				if (!IsPointsAllowed())
 					return HookResult.Continue;
 
 				CCSPlayerController victimController = @event.Userid;
@@ -452,7 +452,7 @@ namespace K4ryuuSimpleRanks
 			{
 				CCSPlayerController player = @event.Userid;
 
-				if (CFG.config.DisableSpawnMessage || !player.PlayerPawn.IsValid)
+				if (CFG.config.DisableSpawnMessage || !player.PlayerPawn.IsValid && IsPointsAllowed())
 					return HookResult.Continue;
 
 				player.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.White}The server is using {ChatColors.Gold}SimpleRanks {ChatColors.White}plugin. Type {ChatColors.Red}!rank {ChatColors.White}to get more information!");
@@ -524,6 +524,20 @@ namespace K4ryuuSimpleRanks
 			Console.WriteLine(message);
 		}
 
+		public bool IsPointsAllowed()
+		{
+			int clients = 0;
+
+			for (int i = 0; i <= Server.MaxPlayers; i++)
+			{
+				CCSPlayerController player = Utilities.GetPlayerFromIndex(i);
+
+				if (player != null && player.IsValid && !player.IsBot && player.PlayerPawn != null)
+					clients++;
+			}
+
+			return (!K4ryuu.GameRules().WarmupPeriod || CFG.config.WarmupPoints) && (CFG.config.MinPlayers <= clients);
+		}
 		private void ResetKillStreak(int playerIndex)
 		{
 			playerKillStreaks[playerIndex] = (1, DateTime.Now);
