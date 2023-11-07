@@ -4,9 +4,6 @@
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <ServerGarbageCollection>true</ServerGarbageCollection>
-    <ConcurrentGarbageCollection>true</ConcurrentGarbageCollection>
-    <ThreadPoolMinThreads>250</ThreadPoolMinThreads>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="MySqlConnector" Version="2.2.7" />
