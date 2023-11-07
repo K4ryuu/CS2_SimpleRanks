@@ -226,6 +226,28 @@ namespace K4ryuuSimpleRanks
 			return newRank;
 		}
 
+		public static async Task ResetPlayerRankInDatabaseAsync(CCSPlayerController playerController)
+		{
+			string steamId = playerController.SteamID.ToString();
+
+			using MySqlConnection connection = Database.GetConnection();
+			try
+			{
+				await connection.OpenAsync();
+
+				await ExecuteNonQueryAsync($@"UPDATE `k4ranks` SET `points` = 0, `rank` = 'None' WHERE `steam_id` = '{steamId}'",
+					new MySqlParameter("@steamId", steamId));
+			}
+			catch (MySqlException ex)
+			{
+				LogError("Error executing query: " + ex.Message);
+			}
+			finally
+			{
+				connection.Close();
+			}
+		}
+
 		private static async Task UpdatePlayerRankInDatabaseAsync(CCSPlayerController playerController, string newRank)
 		{
 			string steamId = playerController.SteamID.ToString();

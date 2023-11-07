@@ -476,10 +476,20 @@ namespace K4ryuuSimpleRanks
 			var (colorCode, rankName) = await Queries.GetRankInfoAsync(player);
 
 			Utilities.ReplyToCommand(player, $" {CFG.config.ChatPrefix} {colorCode}{player.PlayerName} {ChatColors.White}has {ChatColors.Red}{playerVariable} {ChatColors.White}points and is currently {colorCode}{rankName}");
-			return;
 		}
 
-		[ConsoleCommand("ranktop", "Check the current rank and points")]
+		[ConsoleCommand("resetmyrank", "Resets the player's own rank to zero")]
+		public async void OnCommandResetMyRank(CCSPlayerController? player, CommandInfo command)
+		{
+			if (player == null || player.PlayerPawn == null || !player.PlayerPawn.IsValid)
+				return;
+
+			await Queries.ResetPlayerRankInDatabaseAsync(player);
+
+			Server.PrintToChatAll($" {CFG.config.ChatPrefix} {ChatColors.LightRed}{player.PlayerName} has reset their rank and points.");
+		}
+
+		[ConsoleCommand("ranktop", "Check the top 5 players by points")]
 		public async void OnCommandCheckRankTop(CCSPlayerController? player, CommandInfo command)
 		{
 			if (player == null || player.PlayerPawn == null || !player.PlayerPawn.IsValid)
@@ -502,6 +512,38 @@ namespace K4ryuuSimpleRanks
 			}
 		}
 
+		[ConsoleCommand("resetrank", "Resets the player's own rank to zero")]
+		public async void OnCommandResetOtherRank(CCSPlayerController? player, CommandInfo command)
+		{
+			if (player == null || player.PlayerPawn == null || !player.PlayerPawn.IsValid)
+				return;
+
+			if (!IsSteamIDAdmin(player.SteamID.ToString()))
+			{
+				Utilities.ReplyToCommand(player, $" {CFG.config.ChatPrefix} {ChatColors.LightRed}You have no permission to use this command.");
+				return;
+			}
+
+			if (command.ArgCount != 2)
+			{
+				Utilities.ReplyToCommand(player, $" {CFG.config.ChatPrefix} {ChatColors.Gold}Usage: !resetrank \"SteamID64\"");
+				return;
+			}
+
+			List<CCSPlayerController> players = Utilities.GetPlayers();
+			foreach (CCSPlayerController target in players)
+			{
+				if (target.UserId != -1 && target.IsValid && !target.IsBot && target.SteamID.Equals(command.ArgString))
+				{
+					await Queries.ResetPlayerRankInDatabaseAsync(target);
+
+					Server.PrintToChatAll($" {CFG.config.ChatPrefix} {ChatColors.LightRed}{target.PlayerName}'s rank and points has been reset by {player.PlayerName}.");
+
+					return;
+				}
+			}
+		}
+
 		[GameEventHandler]
 		public HookResult OnClientConnect(EventPlayerConnectFull @event, GameEventInfo info)
 		{
@@ -513,6 +555,43 @@ namespace K4ryuuSimpleRanks
 			}
 
 			return HookResult.Continue;
+		}
+
+		public bool IsSteamIDAdmin(string steamIDToCheck)
+		{
+			try
+			{
+				string path = Path.Join(Path.GetDirectoryName(Directory), "k4ryuu_admins.jsonc");
+
+				if (File.Exists(path))
+				{
+					string json = File.ReadAllText(path);
+
+					var jsonObject = JsonConvert.DeserializeObject<string>(json);
+					List<string> loadedSteamIDs = JsonConvert.DeserializeObject<List<string>>(json)!;
+					return loadedSteamIDs.Contains(steamIDToCheck);
+				}
+				else
+				{
+					List<string> defaultConfig = new List<string>
+					{
+						"STEAMID64_HERE_FIRST_ADMIN",
+						"STEAMID64_HERE_SECOND_ADMIN"
+					};
+
+					// Serialize the default configuration to JSON
+					string defaultJson = JsonConvert.SerializeObject(defaultConfig, Formatting.Indented);
+
+					// Write the JSON to the file
+					File.WriteAllText(path, defaultJson);
+					return false;
+				}
+			}
+			catch (Exception ex)
+			{
+				Log("Error checking Steam ID in Admin list: " + ex.Message);
+				return false;
+			}
 		}
 
 		public static void Log(string message)
