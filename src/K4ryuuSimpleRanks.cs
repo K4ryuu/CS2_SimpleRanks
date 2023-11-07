@@ -22,7 +22,7 @@ namespace K4ryuuSimpleRanks
 		public static Dictionary<string, Rank> ranks = new Dictionary<string, Rank>();
 		public static string Directory = string.Empty;
 		public override string ModuleName => "Simple Ranks";
-		public override string ModuleVersion => "v1.3.2";
+		public override string ModuleVersion => "v1.4.0";
 		public override string ModuleAuthor => "K4ryuu";
 
 		public override void Load(bool hotReload)
