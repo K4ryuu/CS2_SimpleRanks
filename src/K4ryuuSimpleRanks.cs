@@ -5,6 +5,7 @@ using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
 using CounterStrikeSharp.API.Modules.Commands;
 using CounterStrikeSharp.API.Modules.Utils;
+using CounterStrikeSharp.API.Core.Attributes;
 
 namespace K4ryuuSimpleRanks
 {
@@ -14,6 +15,7 @@ namespace K4ryuuSimpleRanks
 		public string Color { get; set; } = "Default";
 	}
 
+	[MinimumApiVersion(5)]
 	public class SimpleRanks : BasePlugin
 	{
 		private Dictionary<int, (int killStreak, DateTime lastKillTime)> playerKillStreaks = new Dictionary<int, (int, DateTime)>();
