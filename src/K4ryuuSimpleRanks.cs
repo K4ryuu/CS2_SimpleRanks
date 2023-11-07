@@ -528,17 +528,7 @@ namespace K4ryuuSimpleRanks
 
 		public bool IsPointsAllowed()
 		{
-			int clients = 0;
-
-			for (int i = 0; i <= Server.MaxPlayers; i++)
-			{
-				CCSPlayerController player = Utilities.GetPlayerFromIndex(i);
-
-				if (player != null && player.IsValid && !player.IsBot && player.PlayerPawn != null)
-					clients++;
-			}
-
-			return (!K4ryuu.GameRules().WarmupPeriod || CFG.config.WarmupPoints) && (CFG.config.MinPlayers <= clients);
+			return (!K4ryuu.GameRules().WarmupPeriod || CFG.config.WarmupPoints) && (CFG.config.MinPlayers <= Utilities.GetPlayers().Count);
 		}
 		private void ResetKillStreak(int playerIndex)
 		{
