@@ -128,7 +128,7 @@ internal class Config
 	public bool FFAMode { get; set; }
 	public bool ScoreboardRanks { get; set; }
 	public string? DatabaseHost { get; set; }
-	public uint DatabasePort { get; set; }
+	public int DatabasePort { get; set; }
 	public string? DatabaseUser { get; set; }
 	public string? DatabasePassword { get; set; }
 	public string? DatabaseName { get; set; }

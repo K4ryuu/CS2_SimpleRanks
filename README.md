@@ -118,7 +118,7 @@ Before you begin, ensure you have the following prerequisites:
 
 3. **Configuration:** The configuration file (if there is any), will be generated automatically to the same folder after the plugin firt started succesfully.
 
-3. **Admin Setup:** If you want to use the admin option, try to use the command first, and then the file will be generated in counterstrikesharp/plugins, called k4ryuu_admins.jsonc. Here you can set the admin SteamID64s and my plugins will be using this file, until there is no standard for the admin system.
+4. **Admin Setup:** If you want to use the admin option, try to use the command first, and then the file will be generated in counterstrikesharp/plugins, called k4ryuu_admins.jsonc. Here you can set the admin SteamID64s and my plugins will be using this file, until there is no standard for the admin system.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -134,7 +134,10 @@ The addon provides several commands and console variables (convars) to customize
 - **!ranktop** - Check the top 5 players by points
 - **!resetmyrank** - Reset the players self rank and points
 - **!resetrank "SteamID64"** - Reset the rank of the target if its used by admin
-  
+- **!setpoints "SteamID64" 100** - Sets the targeted player's points to the given value if its used by admin
+- **!givepoints "SteamID64" 100** - Gives points to the targeted player if its used by admin
+- **!removepoints "SteamID64" 100** - Removes points from the targeted player if its used by admin
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- ROADMAP -->
@@ -142,7 +145,7 @@ The addon provides several commands and console variables (convars) to customize
 ## Roadmap
 
 - [x] Minimum amount of players to modify points
-- [ ] Switch to MySQL wrapper
+- [x] Switch to MySQL wrapper
 - [ ] Advanced Web Panel (whenever we reach the goal at https://www.buymeacoffee.com/k4ryuu/libahozaxu)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>

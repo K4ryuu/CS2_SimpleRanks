@@ -1,0 +1,11 @@
+-- 2023. 10. 09 - v2.0.0
+
+- Added setpoints command for admins
+- Added removepoints command for admins
+- Added givepoints command for admins
+- Reworked database connections
+- Reworked rank save mechanism
+- Reworked chat formats (credit: @Cruze)
+- Reworked logging method
+- Fixed dictionary problems
+- Fixed crashes (possibly)

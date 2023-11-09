@@ -7,6 +7,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="MySqlConnector" Version="2.2.7" />
+    <PackageReference Include="Nexd.MySQL" Version="1.0.1" />
     <Reference Include="CounterStrikeSharp.API" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>

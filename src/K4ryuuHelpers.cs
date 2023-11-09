@@ -7,7 +7,7 @@ using CounterStrikeSharp.API.Modules.Commands;
 using CounterStrikeSharp.API.Modules.Utils;
 internal static class CCSPlayerControllerEx
 {
-	internal static bool IsValidPlayer(this CCSPlayerController controller)
+	internal static bool IsValidPlayer(this CCSPlayerController? controller)
 	{
 		return controller != null && controller.IsValid && !controller.IsBot;
 	}
