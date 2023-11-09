@@ -23,6 +23,7 @@ namespace K4ryuuSimpleRanks
 		public string Rank { get; set; } = "None";
 		public string RankColor { get; set; } = $"{ChatColors.Default}";
 		public int RankPoints { get; set; } = -1;
+		public bool SpawnedThisRound { get; set; } = false;
 	}
 
 	public class PlayerCache<T> : Dictionary<int, T>
@@ -194,7 +195,7 @@ namespace K4ryuuSimpleRanks
 				List<CCSPlayerController> players = new List<CCSPlayerController>();
 				foreach (CCSPlayerController player in players)
 				{
-					if (!player.IsValidPlayer())
+					if (!player.IsValidPlayer() || !PlayerSummaries[player].SpawnedThisRound)
 						continue;
 
 					CsTeam playerTeam = (CsTeam)player.TeamNum;
@@ -210,6 +211,8 @@ namespace K4ryuuSimpleRanks
 							ModifyClientPoints(player, CHANGE_MODE.REMOVE, CFG.config.RoundLosePoints, "Round Lose");
 						}
 					}
+
+					PlayerSummaries[player].SpawnedThisRound = false;
 				}
 
 				return HookResult.Continue;
@@ -433,6 +436,8 @@ namespace K4ryuuSimpleRanks
 
 				if (CFG.config.DisableSpawnMessage || !player.PlayerPawn.IsValid && IsPointsAllowed())
 					return HookResult.Continue;
+
+				PlayerSummaries[player].SpawnedThisRound = true;
 
 				player.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.White}The server is using {ChatColors.Gold}SimpleRanks {ChatColors.White}plugin. Type {ChatColors.Red}!rank {ChatColors.White}to get more information!");
 
