@@ -40,7 +40,7 @@ internal class CFG
 
 		Config config = new Config
 		{
-			ChatPrefix = "[SimpleRanks]",
+			ChatPrefix = "{Blue}[SimpleRanks]",
 			DisableSpawnMessage = false,
 			MinPlayers = 4,
 			WarmupPoints = false,

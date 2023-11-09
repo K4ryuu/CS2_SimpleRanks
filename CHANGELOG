@@ -1,3 +1,17 @@
+-- 2023. 10. 09 - v2.0.2
+
+- Fixed validations
+- Fixed ranktop not showing
+- Fixed dictionary null problems
+- Fixed MySQL connection problems
+- Fixed crashes
+- Fixed database insert problem
+
+-- 2023. 10. 09 - v2.0.1
+
+- Fixed players getting points removed for round end lose if they not spawned
+- Fixed miss typos
+
 -- 2023. 10. 09 - v2.0.0
 
 - Added setpoints command for admins

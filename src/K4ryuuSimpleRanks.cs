@@ -8,6 +8,8 @@ using CounterStrikeSharp.API.Modules.Utils;
 using CounterStrikeSharp.API.Core.Attributes;
 using Nexd.MySQL;
 using System.Reflection;
+using MySqlConnector;
+using System.Linq.Expressions;
 
 namespace K4ryuuSimpleRanks
 {
@@ -398,34 +400,28 @@ namespace K4ryuuSimpleRanks
 					}
 				}
 
-				// Increase assister points
-				if (assisterController != null)
+				if (assisterController.IsValidPlayer())
 				{
-					int assisterIndex = assisterController.UserId ?? -1;
+					if (!PlayerSummaries.ContainsPlayer(assisterController))
+						LoadPlayerData(assisterController);
 
-					if (assisterIndex != -1)
+					int pointChange = 0;
+
+					if (CFG.config.AssistPoints > 0)
 					{
-						if (!PlayerSummaries.ContainsPlayer(assisterController))
-							LoadPlayerData(assisterController);
-
-						int pointChange = 0;
-
-						if (CFG.config.AssistPoints > 0)
-						{
-							pointChange += CFG.config.AssistPoints;
-							assisterController.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.White}Points: {ChatColors.Green}{PlayerSummaries[assisterController].Points}[+{CFG.config.AssistPoints} Assist]");
-							PlayerSummaries[assisterController].Points += CFG.config.AssistPoints;
-						}
-
-						if (@event.Assistedflash && CFG.config.AsssistFlashPoints > 0)
-						{
-							pointChange += CFG.config.AsssistFlashPoints;
-							assisterController.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.White}Points: {ChatColors.Green}{PlayerSummaries[assisterController].Points}[+{CFG.config.AsssistFlashPoints} Flash Assist]");
-							PlayerSummaries[assisterController].Points += CFG.config.AsssistFlashPoints;
-						}
-
-						MySql!.ExecuteNonQueryAsync($"UPDATE `k4ranks` SET `points` = (`points` + {pointChange}) WHERE `steam_id` = {assisterController.SteamID};");
+						pointChange += CFG.config.AssistPoints;
+						assisterController.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.White}Points: {ChatColors.Green}{PlayerSummaries[assisterController].Points}[+{CFG.config.AssistPoints} Assist]");
+						PlayerSummaries[assisterController].Points += CFG.config.AssistPoints;
 					}
+
+					if (@event.Assistedflash && CFG.config.AsssistFlashPoints > 0)
+					{
+						pointChange += CFG.config.AsssistFlashPoints;
+						assisterController.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.White}Points: {ChatColors.Green}{PlayerSummaries[assisterController].Points}[+{CFG.config.AsssistFlashPoints} Flash Assist]");
+						PlayerSummaries[assisterController].Points += CFG.config.AsssistFlashPoints;
+					}
+
+					MySql!.ExecuteNonQueryAsync($"UPDATE `k4ranks` SET `points` = (`points` + {pointChange}) WHERE `steam_id` = {assisterController.SteamID};");
 				}
 
 				return HookResult.Continue;
@@ -434,12 +430,15 @@ namespace K4ryuuSimpleRanks
 			{
 				CCSPlayerController player = @event.Userid;
 
-				if (CFG.config.DisableSpawnMessage || !player.PlayerPawn.IsValid && IsPointsAllowed())
+				if (CFG.config.DisableSpawnMessage || !player.IsValidPlayer() || !IsPointsAllowed())
 					return HookResult.Continue;
+
+				if (!PlayerSummaries.ContainsPlayer(player!))
+					LoadPlayerData(player!);
 
 				PlayerSummaries[player].SpawnedThisRound = true;
 
-				player.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.White}The server is using {ChatColors.Gold}SimpleRanks {ChatColors.White}plugin. Type {ChatColors.Red}!rank {ChatColors.White}to get more information!");
+				player.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.Green}The server is using {ChatColors.Gold}SimpleRanks {ChatColors.Green}plugin. Type {ChatColors.Red}!rank {ChatColors.Green}to get more information!");
 
 				return HookResult.Continue;
 			});
@@ -465,7 +464,7 @@ namespace K4ryuuSimpleRanks
 
 			MySql!.ExecuteNonQueryAsync($"UPDATE `k4ranks` SET `points` = 0 WHERE `steam_id` = {player!.SteamID};");
 
-			Server.PrintToChatAll($" {CFG.config.ChatPrefix} {ChatColors.LightRed}{player.PlayerName} has reset their rank and points.");
+			Server.PrintToChatAll($" {CFG.config.ChatPrefix} {ChatColors.Red}{player.PlayerName} has reset their rank and points.");
 		}
 
 		[ConsoleCommand("ranktop", "Check the top 5 players by points")]
@@ -513,7 +512,7 @@ namespace K4ryuuSimpleRanks
 
 			if (!IsSteamIDAdmin(player!.SteamID.ToString()))
 			{
-				Utilities.ReplyToCommand(player, $" {CFG.config.ChatPrefix} {ChatColors.LightRed}You have no permission to use this command.");
+				Utilities.ReplyToCommand(player, $" {CFG.config.ChatPrefix} {ChatColors.Red}You have no permission to use this command.");
 				return;
 			}
 
@@ -533,8 +532,8 @@ namespace K4ryuuSimpleRanks
 
 					MySql!.ExecuteNonQueryAsync($"UPDATE `k4ranks` SET `points` = 0 WHERE `steam_id` = {target.SteamID};");
 
-					Server.PrintToChatAll($" {CFG.config.ChatPrefix} {ChatColors.LightRed}{target.PlayerName}'s rank and points has been reset by {player.PlayerName}.");
-					Log($" {player.PlayerName} has reset {target.PlayerName}'s points.");
+					Server.PrintToChatAll($" {CFG.config.ChatPrefix} {ChatColors.Red}{target.PlayerName}'s rank and points has been reset by {player.PlayerName}.");
+					Log($"{player.PlayerName} has reset {target.PlayerName}'s points.");
 
 					PlayerSummaries[player].Points = 0;
 					CheckNewRank(player);
@@ -552,7 +551,7 @@ namespace K4ryuuSimpleRanks
 
 			if (!IsSteamIDAdmin(player!.SteamID.ToString()))
 			{
-				Utilities.ReplyToCommand(player, $" {CFG.config.ChatPrefix} {ChatColors.LightRed}You have no permission to use this command.");
+				Utilities.ReplyToCommand(player, $" {CFG.config.ChatPrefix} {ChatColors.Red}You have no permission to use this command.");
 				return;
 			}
 
@@ -574,8 +573,8 @@ namespace K4ryuuSimpleRanks
 
 						MySql!.ExecuteNonQueryAsync($"UPDATE `k4ranks` SET `points` = {parsedInt} WHERE `steam_id` = {target.SteamID};");
 
-						Server.PrintToChatAll($" {CFG.config.ChatPrefix} {ChatColors.LightRed}{target.PlayerName}'s points has been set to {parsedInt} by {player.PlayerName}.");
-						Log($" {CFG.config.ChatPrefix} {ChatColors.LightRed}{player.PlayerName} has set {target.PlayerName}'s points to {parsedInt}.");
+						Server.PrintToChatAll($" {CFG.config.ChatPrefix} {ChatColors.Red}{target.PlayerName}'s points has been set to {parsedInt} by {player.PlayerName}.");
+						Log($"{player.PlayerName} has set {target.PlayerName}'s points to {parsedInt}.");
 
 						PlayerSummaries[player].Points = parsedInt;
 						CheckNewRank(player);
@@ -586,7 +585,7 @@ namespace K4ryuuSimpleRanks
 			}
 			else
 			{
-				Utilities.ReplyToCommand(player, $" {CFG.config.ChatPrefix} {ChatColors.LightRed}The given amount is invalid.");
+				Utilities.ReplyToCommand(player, $" {CFG.config.ChatPrefix} {ChatColors.Red}The given amount is invalid.");
 				return;
 			}
 		}
@@ -599,7 +598,7 @@ namespace K4ryuuSimpleRanks
 
 			if (!IsSteamIDAdmin(player!.SteamID.ToString()))
 			{
-				Utilities.ReplyToCommand(player, $" {CFG.config.ChatPrefix} {ChatColors.LightRed}You have no permission to use this command.");
+				Utilities.ReplyToCommand(player, $" {CFG.config.ChatPrefix} {ChatColors.Red}You have no permission to use this command.");
 				return;
 			}
 
@@ -621,8 +620,8 @@ namespace K4ryuuSimpleRanks
 
 						MySql!.ExecuteNonQueryAsync($"UPDATE `k4ranks` SET `points` = (`points` + {parsedInt}) WHERE `steam_id` = {target.SteamID};");
 
-						Server.PrintToChatAll($" {CFG.config.ChatPrefix} {ChatColors.LightRed}{player.PlayerName} has given {parsedInt} points to {target.PlayerName}.");
-						Log($" {CFG.config.ChatPrefix} {ChatColors.LightRed}{player.PlayerName} has given {parsedInt} points to {target.PlayerName}.");
+						Server.PrintToChatAll($" {CFG.config.ChatPrefix} {ChatColors.Red}{player.PlayerName} has given {parsedInt} points to {target.PlayerName}.");
+						Log($"{player.PlayerName} has given {parsedInt} points to {target.PlayerName}.");
 
 						PlayerSummaries[player].Points += parsedInt;
 						CheckNewRank(player);
@@ -633,7 +632,7 @@ namespace K4ryuuSimpleRanks
 			}
 			else
 			{
-				Utilities.ReplyToCommand(player, $" {CFG.config.ChatPrefix} {ChatColors.LightRed}The given amount is invalid.");
+				Utilities.ReplyToCommand(player, $" {CFG.config.ChatPrefix} {ChatColors.Red}The given amount is invalid.");
 				return;
 			}
 		}
@@ -646,7 +645,7 @@ namespace K4ryuuSimpleRanks
 
 			if (!IsSteamIDAdmin(player!.SteamID.ToString()))
 			{
-				Utilities.ReplyToCommand(player, $" {CFG.config.ChatPrefix} {ChatColors.LightRed}You have no permission to use this command.");
+				Utilities.ReplyToCommand(player, $" {CFG.config.ChatPrefix} {ChatColors.Red}You have no permission to use this command.");
 				return;
 			}
 
@@ -668,8 +667,8 @@ namespace K4ryuuSimpleRanks
 
 						MySql!.ExecuteNonQueryAsync($"UPDATE `k4ranks` SET `points` = (`points` - {parsedInt}) WHERE `steam_id` = {target.SteamID};");
 
-						Server.PrintToChatAll($" {CFG.config.ChatPrefix} {ChatColors.LightRed}{player.PlayerName} has removed {parsedInt} points from {target.PlayerName}.");
-						Log($" {CFG.config.ChatPrefix} {ChatColors.LightRed}{player.PlayerName} has removed {parsedInt} points from {target.PlayerName}.");
+						Server.PrintToChatAll($" {CFG.config.ChatPrefix} {ChatColors.Red}{player.PlayerName} has removed {parsedInt} points from {target.PlayerName}.");
+						Log($"{player.PlayerName} has removed {parsedInt} points from {target.PlayerName}.");
 
 						PlayerSummaries[player].Points -= parsedInt;
 
@@ -684,7 +683,7 @@ namespace K4ryuuSimpleRanks
 			}
 			else
 			{
-				Utilities.ReplyToCommand(player, $" {CFG.config.ChatPrefix} {ChatColors.LightRed}The given amount is invalid.");
+				Utilities.ReplyToCommand(player, $" {CFG.config.ChatPrefix} {ChatColors.Red}The given amount is invalid.");
 				return;
 			}
 		}
@@ -762,13 +761,13 @@ namespace K4ryuuSimpleRanks
 
 			MySqlQueryValue values = new MySqlQueryValue()
 										.Add("name", player.PlayerName)
-										.Add("steamid", player.SteamID.ToString());
+										.Add("steam_id", player.SteamID.ToString());
 
-			MySql!.Table("k4ranks").InsertIfNotExistAsync(values, $"`name` = '{player.PlayerName}'");
+			MySql!.Table("k4ranks").InsertIfNotExist(values, $"`name` = '{player.PlayerName}'");
 
 			MySqlQueryResult result = MySql!.Table("k4ranks").Where(MySqlQueryCondition.New("steam_id", "=", player.SteamID.ToString())).Select("points");
 
-			PlayerSummaries[player].Points = result.Get<int>(0, "points");
+			PlayerSummaries[player].Points = result.Rows > 0 ? result.Get<int>(0, "points") : 0;
 
 			string newRank = "None";
 			Rank? setRank = null;
@@ -808,6 +807,9 @@ namespace K4ryuuSimpleRanks
 
 		public void ModifyClientPoints(CCSPlayerController player, CHANGE_MODE mode, int amount, string reason)
 		{
+			if (!player.IsValidPlayer())
+				return;
+
 			if (!IsPointsAllowed() || amount == 0)
 				return;
 
@@ -832,7 +834,7 @@ namespace K4ryuuSimpleRanks
 					}
 				case CHANGE_MODE.REMOVE:
 					{
-						player.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.White}Points: {ChatColors.LightRed}{PlayerSummaries[player].Points}[-{amount} {reason}]");
+						player.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.White}Points: {ChatColors.Red}{PlayerSummaries[player].Points}[-{amount} {reason}]");
 						PlayerSummaries[player].Points -= amount;
 
 						if (PlayerSummaries[player].Points < 0)
@@ -868,7 +870,7 @@ namespace K4ryuuSimpleRanks
 			if (setRank == null || newRank == "None" || newRank == PlayerSummaries[player].Rank)
 				return;
 
-			Server.PrintToChatAll($" {ChatColors.LightRed}{CFG.config.ChatPrefix} {ChatColors.Gold}{player.PlayerName} has been {(setRank.Exp > PlayerSummaries[player].RankPoints ? "promoted" : "demoted")} to {newRank}.");
+			Server.PrintToChatAll($" {ChatColors.Red}{CFG.config.ChatPrefix} {ChatColors.Gold}{player.PlayerName} has been {(setRank.Exp > PlayerSummaries[player].RankPoints ? "promoted" : "demoted")} to {newRank}.");
 
 			PlayerSummaries[player].Rank = newRank;
 			PlayerSummaries[player].RankPoints = setRank.Exp;
