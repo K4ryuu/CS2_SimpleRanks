@@ -521,7 +521,7 @@ namespace K4ryuuSimpleRanks
 			List<CCSPlayerController> players = Utilities.GetPlayers();
 			foreach (CCSPlayerController target in players)
 			{
-				if (target.IsValidPlayer() && target.SteamID.ToString() == Regex.Replace(command.ArgString, @"['"",\s]", ""))
+				if (target.IsValidPlayer() && target.SteamID.ToString() == Regex.Replace(command.ArgByIndex(1), @"['"",\s]", ""))
 				{
 					if (!PlayerSummaries.ContainsPlayer(target!))
 						LoadPlayerData(target!);
@@ -562,7 +562,7 @@ namespace K4ryuuSimpleRanks
 				List<CCSPlayerController> players = Utilities.GetPlayers();
 				foreach (CCSPlayerController target in players)
 				{
-					if (target.IsValidPlayer() && target.SteamID.ToString() == Regex.Replace(command.ArgString, @"['"",\s]", ""))
+					if (target.IsValidPlayer() && target.SteamID.ToString() == Regex.Replace(command.ArgByIndex(1), @"['"",\s]", ""))
 					{
 						if (!PlayerSummaries.ContainsPlayer(target!))
 							LoadPlayerData(target!);
@@ -609,7 +609,7 @@ namespace K4ryuuSimpleRanks
 				List<CCSPlayerController> players = Utilities.GetPlayers();
 				foreach (CCSPlayerController target in players)
 				{
-					if (target.IsValidPlayer() && target.SteamID.ToString() == Regex.Replace(command.ArgString, @"['"",\s]", ""))
+					if (target.IsValidPlayer() && target.SteamID.ToString() == Regex.Replace(command.ArgByIndex(1), @"['"",\s]", ""))
 					{
 						if (!PlayerSummaries.ContainsPlayer(target!))
 							LoadPlayerData(target!);
@@ -656,7 +656,7 @@ namespace K4ryuuSimpleRanks
 				List<CCSPlayerController> players = Utilities.GetPlayers();
 				foreach (CCSPlayerController target in players)
 				{
-					if (target.IsValidPlayer() && target.SteamID.ToString() == Regex.Replace(command.ArgString, @"['"",\s]", ""))
+					if (target.IsValidPlayer() && target.SteamID.ToString() == Regex.Replace(command.ArgByIndex(1), @"['"",\s]", ""))
 					{
 						if (!PlayerSummaries.ContainsPlayer(target!))
 							LoadPlayerData(target!);
