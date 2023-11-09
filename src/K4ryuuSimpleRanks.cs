@@ -667,6 +667,10 @@ namespace K4ryuuSimpleRanks
 						Log($" {CFG.config.ChatPrefix} {ChatColors.LightRed}{player.PlayerName} has removed {parsedInt} points from {target.PlayerName}.");
 
 						PlayerSummaries[player].Points -= parsedInt;
+
+						if (PlayerSummaries[player].Points < 0)
+							PlayerSummaries[player].Points = 0;
+
 						CheckNewRank(player);
 
 						return;
@@ -825,6 +829,10 @@ namespace K4ryuuSimpleRanks
 					{
 						player.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.White}Points: {ChatColors.LightRed}{PlayerSummaries[player].Points}[-{amount} {reason}]");
 						PlayerSummaries[player].Points -= amount;
+
+						if (PlayerSummaries[player].Points < 0)
+							PlayerSummaries[player].Points = 0;
+
 						MySql!.ExecuteNonQueryAsync($"UPDATE `k4ranks` SET `points` = GREATEST(`points` - {amount}, 0) WHERE `steam_id` = {player.SteamID};");
 						break;
 					}
