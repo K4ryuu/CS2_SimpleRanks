@@ -65,7 +65,7 @@ namespace K4ryuuSimpleRanks
 		public static Dictionary<string, Rank> ranks = new Dictionary<string, Rank>();
 		internal static PlayerCache<User> PlayerSummaries = new PlayerCache<User>();
 		public override string ModuleName => "Simple Ranks";
-		public override string ModuleVersion => "v2.1";
+		public override string ModuleVersion => "v2.0.1";
 		public override string ModuleAuthor => "K4ryuu";
 
 		public override void Load(bool hotReload)
