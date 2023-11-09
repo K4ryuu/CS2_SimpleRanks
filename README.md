@@ -143,9 +143,7 @@ The addon provides several commands and console variables (convars) to customize
 
 - [x] Minimum amount of players to modify points
 - [ ] Switch to MySQL wrapper
-- [ ] Web Panel
-  - [ ] Top List
-  - [ ] Informations about points
+- [ ] Advanced Web Panel (whenever we reach the goal at https://www.buymeacoffee.com/k4ryuu/libahozaxu)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
