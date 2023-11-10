@@ -272,14 +272,14 @@ namespace K4ryuuSimpleRanks
 						if (CFG.config.HeadshotPoints > 0)
 						{
 							pointChange += CFG.config.KillPoints;
-							killerController.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.White}Points: {ChatColors.Green}{PlayerSummaries[killerController].Points}[+{CFG.config.KillPoints} Kill]");
+							killerController.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.White}Points: {ChatColors.Green}{PlayerSummaries[killerController].Points} [+{CFG.config.KillPoints} Kill]");
 							PlayerSummaries[killerController].Points += CFG.config.KillPoints;
 						}
 
 						if (@event.Headshot && CFG.config.HeadshotPoints > 0)
 						{
 							pointChange += CFG.config.HeadshotPoints;
-							killerController.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.White}Points: {ChatColors.Green}{PlayerSummaries[killerController].Points}[+{CFG.config.HeadshotPoints} Headshot]");
+							killerController.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.White}Points: {ChatColors.Green}{PlayerSummaries[killerController].Points} {ChatColors.Olive}[+{CFG.config.HeadshotPoints} Headshot]");
 							PlayerSummaries[killerController].Points += CFG.config.HeadshotPoints;
 						}
 
@@ -288,35 +288,35 @@ namespace K4ryuuSimpleRanks
 						{
 							int calculatedPoints = @event.Penetrated * CFG.config.PenetratedPoints;
 							pointChange += calculatedPoints;
-							killerController.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.White}Points: {ChatColors.Green}{PlayerSummaries[killerController].Points}[+{calculatedPoints} Penetration]");
+							killerController.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.White}Points: {ChatColors.Green}{PlayerSummaries[killerController].Points} {ChatColors.LightBlue}[+{calculatedPoints} Penetration]");
 							PlayerSummaries[killerController].Points += calculatedPoints;
 						}
 
 						if (@event.Noscope && CFG.config.NoScopePoints > 0)
 						{
 							pointChange += CFG.config.NoScopePoints;
-							killerController.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.White}Points: {ChatColors.Green}{PlayerSummaries[killerController].Points}[+{CFG.config.NoScopePoints} NoScope]");
+							killerController.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.White}Points: {ChatColors.Green}{PlayerSummaries[killerController].Points} {ChatColors.LightRed}[+{CFG.config.NoScopePoints} NoScope]");
 							PlayerSummaries[killerController].Points += CFG.config.NoScopePoints;
 						}
 
 						if (@event.Thrusmoke && CFG.config.ThrusmokePoints > 0)
 						{
 							pointChange += CFG.config.ThrusmokePoints;
-							killerController.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.White}Points: {ChatColors.Green}{PlayerSummaries[killerController].Points}[+{CFG.config.ThrusmokePoints} ThruSmoke]");
+							killerController.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.White}Points: {ChatColors.Green}{PlayerSummaries[killerController].Points} {ChatColors.LightRed}[+{CFG.config.ThrusmokePoints} ThruSmoke]");
 							PlayerSummaries[killerController].Points += CFG.config.ThrusmokePoints;
 						}
 
 						if (@event.Attackerblind && CFG.config.BlindKillPoints > 0)
 						{
 							pointChange += CFG.config.BlindKillPoints;
-							killerController.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.White}Points: {ChatColors.Green}{PlayerSummaries[killerController].Points}[+{CFG.config.BlindKillPoints} Blind Kill]");
+							killerController.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.White}Points: {ChatColors.Green}{PlayerSummaries[killerController].Points} {ChatColors.LightRed}[+{CFG.config.BlindKillPoints} Blind Kill]");
 							PlayerSummaries[killerController].Points += CFG.config.BlindKillPoints;
 						}
 
 						if (@event.Distance >= CFG.config.LongDistance && CFG.config.LongDistanceKillPoints > 0)
 						{
 							pointChange += CFG.config.LongDistanceKillPoints;
-							killerController.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.White}Points: {ChatColors.Green}{PlayerSummaries[killerController].Points}[+{CFG.config.LongDistanceKillPoints} Long Distance]");
+							killerController.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.White}Points: {ChatColors.Green}{PlayerSummaries[killerController].Points} {ChatColors.Magenta}[+{CFG.config.LongDistanceKillPoints} Long Distance]");
 							PlayerSummaries[killerController].Points += CFG.config.LongDistanceKillPoints;
 						}
 
@@ -329,7 +329,7 @@ namespace K4ryuuSimpleRanks
 									if (CFG.config.GrenadeKillPoints > 0)
 									{
 										pointChange += CFG.config.GrenadeKillPoints;
-										killerController.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.White}Points: {ChatColors.Green}{PlayerSummaries[killerController].Points}[+{CFG.config.GrenadeKillPoints} Grenade Kill]");
+										killerController.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.White}Points: {ChatColors.Green}{PlayerSummaries[killerController].Points} {ChatColors.Magenta}[+{CFG.config.GrenadeKillPoints} Grenade Kill]");
 										PlayerSummaries[killerController].Points += CFG.config.GrenadeKillPoints;
 									}
 									break;
@@ -339,7 +339,7 @@ namespace K4ryuuSimpleRanks
 									if (CFG.config.KnifeKillPoints > 0)
 									{
 										pointChange += CFG.config.KnifeKillPoints;
-										killerController.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.White}Points: {ChatColors.Green}{PlayerSummaries[killerController].Points}[+{CFG.config.KnifeKillPoints} Knife Kill]");
+										killerController.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.White}Points: {ChatColors.Green}{PlayerSummaries[killerController].Points} {ChatColors.Magenta}[+{CFG.config.KnifeKillPoints} Knife Kill]");
 										PlayerSummaries[killerController].Points += CFG.config.KnifeKillPoints;
 									}
 									break;
@@ -349,7 +349,7 @@ namespace K4ryuuSimpleRanks
 									if (CFG.config.TaserKillPoints > 0)
 									{
 										pointChange += CFG.config.TaserKillPoints;
-										killerController.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.White}Points: {ChatColors.Green}{PlayerSummaries[killerController].Points}[+{CFG.config.TaserKillPoints} Taser Kill]");
+										killerController.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.White}Points: {ChatColors.Green}{PlayerSummaries[killerController].Points} {ChatColors.Magenta}[+{CFG.config.TaserKillPoints} Taser Kill]");
 										PlayerSummaries[killerController].Points += CFG.config.TaserKillPoints;
 									}
 									break;
@@ -424,7 +424,7 @@ namespace K4ryuuSimpleRanks
 								if (points > 0)
 								{
 									pointChange += points;
-									killerController.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.White}Points: {ChatColors.Green}{PlayerSummaries[killerController].Points}[+{points} {killStreakMessage}]");
+									killerController.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.White}Points: {ChatColors.Green}{PlayerSummaries[killerController].Points} {ChatColors.LightYellow}[+{points} {killStreakMessage}]");
 									PlayerSummaries[killerController].Points += points;
 								}
 							}
@@ -452,14 +452,14 @@ namespace K4ryuuSimpleRanks
 					if (CFG.config.AssistPoints > 0)
 					{
 						pointChange += CFG.config.AssistPoints;
-						assisterController.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.White}Points: {ChatColors.Green}{PlayerSummaries[assisterController].Points}[+{CFG.config.AssistPoints} Assist]");
+						assisterController.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.White}Points: {ChatColors.Green}{PlayerSummaries[assisterController].Points} [+{CFG.config.AssistPoints} Assist]");
 						PlayerSummaries[assisterController].Points += CFG.config.AssistPoints;
 					}
 
 					if (@event.Assistedflash && CFG.config.AsssistFlashPoints > 0)
 					{
 						pointChange += CFG.config.AsssistFlashPoints;
-						assisterController.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.White}Points: {ChatColors.Green}{PlayerSummaries[assisterController].Points}[+{CFG.config.AsssistFlashPoints} Flash Assist]");
+						assisterController.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.White}Points: {ChatColors.Green}{PlayerSummaries[assisterController].Points} [+{CFG.config.AsssistFlashPoints} Flash Assist]");
 						PlayerSummaries[assisterController].Points += CFG.config.AsssistFlashPoints;
 					}
 
@@ -807,21 +807,21 @@ namespace K4ryuuSimpleRanks
 			{
 				case CHANGE_MODE.SET:
 					{
-						player.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.White}Points: {ChatColors.Gold}{PlayerSummaries[player].Points}[={amount} {reason}]");
+						player.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.White}Points: {ChatColors.Gold}{PlayerSummaries[player].Points} [={amount} {reason}]");
 						PlayerSummaries[player].Points = amount;
 						MySql!.ExecuteNonQueryAsync($"UPDATE `k4ranks` SET `points` = {amount} WHERE `steam_id` = {player.SteamID};");
 						break;
 					}
 				case CHANGE_MODE.GIVE:
 					{
-						player.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.White}Points: {ChatColors.Green}{PlayerSummaries[player].Points}[+{amount} {reason}]");
+						player.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.White}Points: {ChatColors.Green}{PlayerSummaries[player].Points} [+{amount} {reason}]");
 						PlayerSummaries[player].Points += amount;
 						MySql!.ExecuteNonQueryAsync($"UPDATE `k4ranks` SET `points` = (`points` + {amount}) WHERE `steam_id` = {player.SteamID};");
 						break;
 					}
 				case CHANGE_MODE.REMOVE:
 					{
-						player.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.White}Points: {ChatColors.Red}{PlayerSummaries[player].Points}[-{amount} {reason}]");
+						player.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.White}Points: {ChatColors.Red}{PlayerSummaries[player].Points} [-{amount} {reason}]");
 						PlayerSummaries[player].Points -= amount;
 
 						if (PlayerSummaries[player].Points < 0)
