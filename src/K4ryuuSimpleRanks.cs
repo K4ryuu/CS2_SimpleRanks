@@ -59,7 +59,7 @@ namespace K4ryuuSimpleRanks
 		REMOVE
 	}
 
-	[MinimumApiVersion(16)]
+	[MinimumApiVersion(27)]
 	public class SimpleRanks : BasePlugin
 	{
 		MySqlDb? MySql = null;
