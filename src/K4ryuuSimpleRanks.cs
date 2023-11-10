@@ -245,7 +245,7 @@ namespace K4ryuuSimpleRanks
 					}
 					else
 					{
-						ModifyClientPoints(victimController, CHANGE_MODE.REMOVE, CFG.config.DeathPoints, "Die");
+						ModifyClientPoints(victimController, CHANGE_MODE.REMOVE, CFG.config.DeathPoints, "Dying");
 					}
 
 					if (CFG.config.ScoreboardScoreSync)
@@ -486,7 +486,12 @@ namespace K4ryuuSimpleRanks
 				if (CFG.config.DisableSpawnMessage || (DateTime.Now - PlayerSummaries[player].LastMessage).TotalMinutes < 1)
 					return HookResult.Continue;
 
-				player.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.Green}The server is using {ChatColors.Gold}SimpleRanks {ChatColors.Green}plugin. Type {ChatColors.Red}!rank {ChatColors.Green}to get more information!");
+				PlayerSummaries[player].LastMessage = DateTime.Now;
+
+				Server.NextFrame(() =>
+				{
+					player.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.Green}The server is using {ChatColors.Gold}SimpleRanks {ChatColors.Green}plugin. Type {ChatColors.Red}!rank {ChatColors.Green}to get more information!");
+				});
 
 				return HookResult.Continue;
 			});
