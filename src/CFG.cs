@@ -46,6 +46,7 @@ internal class CFG
 			WarmupPoints = false,
 			FFAMode = false,
 			ScoreboardRanks = true,
+			ScoreboardScoreSync = false,
 			DatabaseHost = "localhost",
 			DatabasePort = 3306,
 			DatabaseUser = "root",
@@ -130,6 +131,7 @@ internal class Config
 	public int MinPlayers { get; set; }
 	public bool FFAMode { get; set; }
 	public bool ScoreboardRanks { get; set; }
+	public bool ScoreboardScoreSync { get; set; }
 	public string? DatabaseHost { get; set; }
 	public int DatabasePort { get; set; }
 	public string? DatabaseUser { get; set; }

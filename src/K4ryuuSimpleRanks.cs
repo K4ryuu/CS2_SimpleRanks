@@ -248,6 +248,9 @@ namespace K4ryuuSimpleRanks
 					{
 						ModifyClientPoints(victimController, CHANGE_MODE.REMOVE, CFG.config.DeathPoints, "Die");
 					}
+
+					if (CFG.config.ScoreboardScoreSync)
+						victimController.Score = PlayerSummaries[victimController].Points;
 				}
 
 				if ((!CFG.config.PointsForBots && victimController.IsBot) || victimController.UserId == killerController.UserId)
@@ -427,6 +430,9 @@ namespace K4ryuuSimpleRanks
 							}
 						}
 
+						if (CFG.config.ScoreboardScoreSync)
+							killerController.Score = PlayerSummaries[killerController].Points;
+
 						MySql!.ExecuteNonQueryAsync($"UPDATE `k4ranks` SET `points` = (`points` + {pointChange}) WHERE `steam_id` = {killerController.SteamID};");
 					}
 				}
@@ -452,6 +458,9 @@ namespace K4ryuuSimpleRanks
 						PlayerSummaries[assisterController].Points += CFG.config.AsssistFlashPoints;
 					}
 
+					if (CFG.config.ScoreboardScoreSync)
+						assisterController.Score = PlayerSummaries[assisterController].Points;
+
 					MySql!.ExecuteNonQueryAsync($"UPDATE `k4ranks` SET `points` = (`points` + {pointChange}) WHERE `steam_id` = {assisterController.SteamID};");
 				}
 
@@ -464,13 +473,13 @@ namespace K4ryuuSimpleRanks
 				if (!player.IsValidPlayer())
 					return HookResult.Continue;
 
+				if (!PlayerSummaries.ContainsPlayer(player!))
+					LoadPlayerData(player!);
+
 				PlayerSummaries[player].SpawnedThisRound = true;
 
 				if (CFG.config.DisableSpawnMessage)
 					return HookResult.Continue;
-
-				if (!PlayerSummaries.ContainsPlayer(player!))
-					LoadPlayerData(player!);
 
 				player.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.Green}The server is using {ChatColors.Gold}SimpleRanks {ChatColors.Green}plugin. Type {ChatColors.Red}!rank {ChatColors.Green}to get more information!");
 
@@ -731,6 +740,9 @@ namespace K4ryuuSimpleRanks
 
 			PlayerSummaries[player].Points = result.Rows > 0 ? result.Get<int>(0, "points") : 0;
 
+			if (CFG.config.ScoreboardScoreSync)
+				player.Score = PlayerSummaries[player].Points;
+
 			string newRank = "None";
 			Rank? setRank = null;
 
@@ -815,6 +827,9 @@ namespace K4ryuuSimpleRanks
 					}
 			}
 
+			if (CFG.config.ScoreboardScoreSync)
+				player.Score = PlayerSummaries[player].Points;
+
 			string newRank = "None";
 			Rank? setRank = null;
 
@@ -858,6 +873,9 @@ namespace K4ryuuSimpleRanks
 
 		public void CheckNewRank(CCSPlayerController player)
 		{
+			if (CFG.config.ScoreboardScoreSync)
+				player.Score = PlayerSummaries[player].Points;
+
 			string newRank = "None";
 			Rank? setRank = null;
 
