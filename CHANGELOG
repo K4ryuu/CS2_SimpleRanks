@@ -1,4 +1,17 @@
--- 2023. 10. 09 - v2.0.2
+-- 2023. 10. 10 - v2.1.0
+
+- Added admin standard to the plugin (admin cmd permissions "@k4ranks/admin")
+- Added command helper standard to the plugin
+- Added scoreboard score sync with player points (if enabled)
+- Added grenade extra points
+- Added taser extra points
+- Added knife extra points
+- Added more colors for point types
+- Fixed RoundEnd point problems
+- Fixed toplist shows command user's rank
+- Fixed spawn message spam
+
+- -- 2023. 10. 09 - v2.0.2
 
 - Fixed validations
 - Fixed ranktop not showing

@@ -59,7 +59,7 @@ namespace K4ryuuSimpleRanks
 		REMOVE
 	}
 
-	[MinimumApiVersion(27)]
+	[MinimumApiVersion(28)]
 	public class SimpleRanks : BasePlugin
 	{
 		MySqlDb? MySql = null;
@@ -67,7 +67,7 @@ namespace K4ryuuSimpleRanks
 		public static Dictionary<string, Rank> ranks = new Dictionary<string, Rank>();
 		internal static PlayerCache<User> PlayerSummaries = new PlayerCache<User>();
 		public override string ModuleName => "Simple Ranks";
-		public override string ModuleVersion => "v2.0.2";
+		public override string ModuleVersion => "v2.1.0";
 		public override string ModuleAuthor => "K4ryuu";
 
 		public override void Load(bool hotReload)
