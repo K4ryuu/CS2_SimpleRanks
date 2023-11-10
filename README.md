@@ -118,7 +118,7 @@ Before you begin, ensure you have the following prerequisites:
 
 3. **Configuration:** The configuration file (if there is any), will be generated automatically to the same folder after the plugin firt started succesfully.
 
-4. **Admin Setup:** If you want to use the admin option, try to use the command first, and then the file will be generated in counterstrikesharp/plugins, called k4ryuu_admins.jsonc. Here you can set the admin SteamID64s and my plugins will be using this file, until there is no standard for the admin system.
+4. **Admin Setup:** The permission for admin commands: "@k4ranks/admin". counterstrikesharp/configs contains a file, where you can set admins. Here you can add root (as the example given), but to give the exact permission use the given permission name by me above.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
