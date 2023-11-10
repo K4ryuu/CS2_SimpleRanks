@@ -318,6 +318,36 @@ namespace K4ryuuSimpleRanks
 							PlayerSummaries[killerController].Points += CFG.config.LongDistanceKillPoints;
 						}
 
+						string lowerCaseWeaponName = @event.Weapon.ToLower();
+
+						switch (lowerCaseWeaponName)
+						{
+							case var _ when lowerCaseWeaponName.Contains("hegrenade") || lowerCaseWeaponName.Contains("tagrenade") || lowerCaseWeaponName.Contains("firebomb") || lowerCaseWeaponName.Contains("molotov") || lowerCaseWeaponName.Contains("incgrenade") || lowerCaseWeaponName.Contains("flashbang") || lowerCaseWeaponName.Contains("smokegrenade") || lowerCaseWeaponName.Contains("frag") || lowerCaseWeaponName.Contains("bumpmine"):
+								{
+									pointChange += CFG.config.GrenadeKillPoints;
+									killerController.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.White}Points: {ChatColors.Green}{PlayerSummaries[killerController].Points}[+{CFG.config.GrenadeKillPoints} Grenade Kill]");
+									PlayerSummaries[killerController].Points += CFG.config.GrenadeKillPoints;
+
+									break;
+								}
+							case var _ when lowerCaseWeaponName.Contains("cord") || lowerCaseWeaponName.Contains("bowie") || lowerCaseWeaponName.Contains("butterfly") || lowerCaseWeaponName.Contains("karambit") || lowerCaseWeaponName.Contains("skeleton") || lowerCaseWeaponName.Contains("m9_bayonet") || lowerCaseWeaponName.Contains("bayonet") || lowerCaseWeaponName.Contains("t") || lowerCaseWeaponName.Contains("knifegg") || lowerCaseWeaponName.Contains("stiletto") || lowerCaseWeaponName.Contains("ursus") || lowerCaseWeaponName.Contains("tactical") || lowerCaseWeaponName.Contains("push") || lowerCaseWeaponName.Contains("widowmaker") || lowerCaseWeaponName.Contains("outdoor") || lowerCaseWeaponName.Contains("canis"):
+								{
+									pointChange += CFG.config.KnifeKillPoints;
+									killerController.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.White}Points: {ChatColors.Green}{PlayerSummaries[killerController].Points}[+{CFG.config.KnifeKillPoints} Knife Kill]");
+									PlayerSummaries[killerController].Points += CFG.config.KnifeKillPoints;
+
+									break;
+								}
+							case "taser":
+								{
+									pointChange += CFG.config.TaserKillPoints;
+									killerController.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.White}Points: {ChatColors.Green}{PlayerSummaries[killerController].Points}[+{CFG.config.TaserKillPoints} Taser Kill]");
+									PlayerSummaries[killerController].Points += CFG.config.TaserKillPoints;
+
+									break;
+								}
+						}
+
 						int attackerIndex = killerController.UserId ?? 0;
 						if (playerKillStreaks.ContainsKey(attackerIndex))
 						{

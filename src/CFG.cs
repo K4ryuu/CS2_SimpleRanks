@@ -87,7 +87,10 @@ internal class CFG
 			KillingSpreePoints = 9,
 			MonsterKillPoints = 10,
 			UnstoppablePoints = 11,
-			GodLikePoints = 12
+			GodLikePoints = 12,
+			GrenadeKillPoints = 25,
+			TaserKillPoints = 15,
+			KnifeKillPoints = 10
 		};
 
 		// Serialize the config object to JSON and write it to the file.
@@ -169,4 +172,7 @@ internal class Config
 	public int MonsterKillPoints { get; set; }
 	public int UnstoppablePoints { get; set; }
 	public int GodLikePoints { get; set; }
+	public int GrenadeKillPoints { get; set; }
+	public int TaserKillPoints { get; set; }
+	public int KnifeKillPoints { get; set; }
 }
