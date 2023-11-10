@@ -431,13 +431,16 @@ namespace K4ryuuSimpleRanks
 			{
 				CCSPlayerController player = @event.Userid;
 
-				if (CFG.config.DisableSpawnMessage || !player.IsValidPlayer() || !IsPointsAllowed())
+				if (!player.IsValidPlayer())
+					return HookResult.Continue;
+
+				PlayerSummaries[player].SpawnedThisRound = true;
+
+				if (CFG.config.DisableSpawnMessage)
 					return HookResult.Continue;
 
 				if (!PlayerSummaries.ContainsPlayer(player!))
 					LoadPlayerData(player!);
-
-				PlayerSummaries[player].SpawnedThisRound = true;
 
 				player.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.Green}The server is using {ChatColors.Gold}SimpleRanks {ChatColors.Green}plugin. Type {ChatColors.Red}!rank {ChatColors.Green}to get more information!");
 
