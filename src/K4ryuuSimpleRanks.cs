@@ -8,8 +8,6 @@ using CounterStrikeSharp.API.Modules.Utils;
 using CounterStrikeSharp.API.Core.Attributes;
 using Nexd.MySQL;
 using System.Reflection;
-using MySqlConnector;
-using System.Linq.Expressions;
 using CounterStrikeSharp.API.Modules.Admin;
 
 namespace K4ryuuSimpleRanks
@@ -27,6 +25,7 @@ namespace K4ryuuSimpleRanks
 		public string RankColor { get; set; } = $"{ChatColors.Default}";
 		public int RankPoints { get; set; } = -1;
 		public bool SpawnedThisRound { get; set; } = false;
+		public DateTime LastMessage { get; set; }
 	}
 
 	public class PlayerCache<T> : Dictionary<int, T>
@@ -327,26 +326,32 @@ namespace K4ryuuSimpleRanks
 						{
 							case var _ when lowerCaseWeaponName.Contains("hegrenade") || lowerCaseWeaponName.Contains("tagrenade") || lowerCaseWeaponName.Contains("firebomb") || lowerCaseWeaponName.Contains("molotov") || lowerCaseWeaponName.Contains("incgrenade") || lowerCaseWeaponName.Contains("flashbang") || lowerCaseWeaponName.Contains("smokegrenade") || lowerCaseWeaponName.Contains("frag") || lowerCaseWeaponName.Contains("bumpmine"):
 								{
-									pointChange += CFG.config.GrenadeKillPoints;
-									killerController.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.White}Points: {ChatColors.Green}{PlayerSummaries[killerController].Points}[+{CFG.config.GrenadeKillPoints} Grenade Kill]");
-									PlayerSummaries[killerController].Points += CFG.config.GrenadeKillPoints;
-
+									if (CFG.config.GrenadeKillPoints > 0)
+									{
+										pointChange += CFG.config.GrenadeKillPoints;
+										killerController.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.White}Points: {ChatColors.Green}{PlayerSummaries[killerController].Points}[+{CFG.config.GrenadeKillPoints} Grenade Kill]");
+										PlayerSummaries[killerController].Points += CFG.config.GrenadeKillPoints;
+									}
 									break;
 								}
 							case var _ when lowerCaseWeaponName.Contains("cord") || lowerCaseWeaponName.Contains("bowie") || lowerCaseWeaponName.Contains("butterfly") || lowerCaseWeaponName.Contains("karambit") || lowerCaseWeaponName.Contains("skeleton") || lowerCaseWeaponName.Contains("m9_bayonet") || lowerCaseWeaponName.Contains("bayonet") || lowerCaseWeaponName.Contains("t") || lowerCaseWeaponName.Contains("knifegg") || lowerCaseWeaponName.Contains("stiletto") || lowerCaseWeaponName.Contains("ursus") || lowerCaseWeaponName.Contains("tactical") || lowerCaseWeaponName.Contains("push") || lowerCaseWeaponName.Contains("widowmaker") || lowerCaseWeaponName.Contains("outdoor") || lowerCaseWeaponName.Contains("canis"):
 								{
-									pointChange += CFG.config.KnifeKillPoints;
-									killerController.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.White}Points: {ChatColors.Green}{PlayerSummaries[killerController].Points}[+{CFG.config.KnifeKillPoints} Knife Kill]");
-									PlayerSummaries[killerController].Points += CFG.config.KnifeKillPoints;
-
+									if (CFG.config.KnifeKillPoints > 0)
+									{
+										pointChange += CFG.config.KnifeKillPoints;
+										killerController.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.White}Points: {ChatColors.Green}{PlayerSummaries[killerController].Points}[+{CFG.config.KnifeKillPoints} Knife Kill]");
+										PlayerSummaries[killerController].Points += CFG.config.KnifeKillPoints;
+									}
 									break;
 								}
 							case "taser":
 								{
-									pointChange += CFG.config.TaserKillPoints;
-									killerController.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.White}Points: {ChatColors.Green}{PlayerSummaries[killerController].Points}[+{CFG.config.TaserKillPoints} Taser Kill]");
-									PlayerSummaries[killerController].Points += CFG.config.TaserKillPoints;
-
+									if (CFG.config.TaserKillPoints > 0)
+									{
+										pointChange += CFG.config.TaserKillPoints;
+										killerController.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.White}Points: {ChatColors.Green}{PlayerSummaries[killerController].Points}[+{CFG.config.TaserKillPoints} Taser Kill]");
+										PlayerSummaries[killerController].Points += CFG.config.TaserKillPoints;
+									}
 									break;
 								}
 						}
@@ -478,7 +483,7 @@ namespace K4ryuuSimpleRanks
 
 				PlayerSummaries[player].SpawnedThisRound = true;
 
-				if (CFG.config.DisableSpawnMessage)
+				if (CFG.config.DisableSpawnMessage || (DateTime.Now - PlayerSummaries[player].LastMessage).TotalMinutes < 1)
 					return HookResult.Continue;
 
 				player.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.Green}The server is using {ChatColors.Gold}SimpleRanks {ChatColors.Green}plugin. Type {ChatColors.Red}!rank {ChatColors.Green}to get more information!");
