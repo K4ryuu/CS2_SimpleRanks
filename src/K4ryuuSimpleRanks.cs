@@ -721,6 +721,9 @@ namespace K4ryuuSimpleRanks
 			if (setRank == null)
 				return;
 
+			if (CFG.config.ScoreboardRanks)
+				player.Clan = newRank;
+
 			PlayerSummaries[player].Rank = newRank;
 			PlayerSummaries[player].RankPoints = setRank.Exp;
 
@@ -802,6 +805,9 @@ namespace K4ryuuSimpleRanks
 			if (setRank == null || newRank == "None" || newRank == PlayerSummaries[player].Rank)
 				return;
 
+			if (CFG.config.ScoreboardRanks)
+				player.Clan = newRank;
+
 			Server.PrintToChatAll($" {ChatColors.Red}{CFG.config.ChatPrefix} {ChatColors.Gold}{player.PlayerName} has been {(setRank.Exp > PlayerSummaries[player].RankPoints ? "promoted" : "demoted")} to {newRank}.");
 
 			PlayerSummaries[player].Rank = newRank;
@@ -846,6 +852,9 @@ namespace K4ryuuSimpleRanks
 				PlayerSummaries[player].RankColor = $"{ChatColors.Default}";
 				return;
 			}
+
+			if (CFG.config.ScoreboardRanks)
+				player.Clan = newRank;
 
 			PlayerSummaries[player].Rank = newRank;
 			PlayerSummaries[player].RankPoints = setRank.Exp;
