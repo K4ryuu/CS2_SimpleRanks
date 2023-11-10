@@ -485,6 +485,7 @@ namespace K4ryuuSimpleRanks
 
 				for (int i = 0; i < result.Count; i++)
 				{
+					int pointChcek = result.Get<int>(i, "points");
 					string playerRank = "None";
 
 					foreach (var kvp in ranks)
@@ -492,7 +493,7 @@ namespace K4ryuuSimpleRanks
 						string level = kvp.Key;
 						Rank rank = kvp.Value;
 
-						if (PlayerSummaries[player].Points >= rank.Exp)
+						if (pointChcek >= rank.Exp)
 						{
 							playerRank = level;
 						}
