@@ -8,6 +8,9 @@
 ![GitHub all releases](https://img.shields.io/github/downloads/K4ryuu/CS2_SimpleRanks/total?style=for-the-badge)
 ![GitHub last commit (branch)](https://img.shields.io/github/last-commit/K4ryuu/CS2_SimpleRanks/dev?style=for-the-badge)
 
+> [!WARNING]  
+> This plugin has been moved to https://github.com/K4ryuu/K4-System
+
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
