@@ -77,7 +77,7 @@ namespace K4ryuuSimpleRanks
 			MySql = new MySqlDb(CFG.config.DatabaseHost!, CFG.config.DatabaseUser!, CFG.config.DatabasePassword!, CFG.config.DatabaseName!, CFG.config.DatabasePort);
 			MySql.ExecuteNonQueryAsync(@"CREATE TABLE IF NOT EXISTS `k4ranks` (`id` INT AUTO_INCREMENT PRIMARY KEY, `steam_id` VARCHAR(255) NOT NULL, `name` VARCHAR(255) DEFAULT NULL, `points` INT NOT NULL DEFAULT 0, UNIQUE (`steam_id`));");
 
-			List<CCSPlayerController> players = new List<CCSPlayerController>();
+			List<CCSPlayerController> players = Utilities.GetPlayers();
 			foreach (CCSPlayerController player in players)
 			{
 				if (!player.IsValidPlayer())
@@ -187,6 +187,30 @@ namespace K4ryuuSimpleRanks
 				ModifyClientPoints(@event.Userid, CHANGE_MODE.GIVE, CFG.config.MVPPoints, "Round MVP");
 				return HookResult.Continue;
 			});
+			RegisterEventHandler<EventRoundStart>((@event, info) =>
+			{
+				if (!IsPointsAllowed())
+					return HookResult.Continue;
+
+				List<CCSPlayerController> players = Utilities.GetPlayers();
+				foreach (CCSPlayerController player in players)
+				{
+					if (!player.IsValid || player.IsBot)
+						continue;
+
+					if (!PlayerSummaries.ContainsPlayer(player!))
+						LoadPlayerData(player!);
+
+					if (CFG.config.DisableSpawnMessage || PlayerSummaries[player].SpawnedThisRound)
+						continue;
+
+					player.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.Green}The server is using {ChatColors.Gold}SimpleRanks {ChatColors.Green}plugin. Type {ChatColors.Red}!rank {ChatColors.Green}to get more information!");
+
+					PlayerSummaries[player].SpawnedThisRound = true;
+				}
+
+				return HookResult.Continue;
+			});
 			RegisterEventHandler<EventRoundEnd>((@event, info) =>
 			{
 				CsTeam winnerTeam = (CsTeam)@event.Winner;
@@ -194,7 +218,7 @@ namespace K4ryuuSimpleRanks
 				if (!IsPointsAllowed())
 					return HookResult.Continue;
 
-				List<CCSPlayerController> players = new List<CCSPlayerController>();
+				List<CCSPlayerController> players = Utilities.GetPlayers();
 				foreach (CCSPlayerController player in players)
 				{
 					if (!player.IsValidPlayer() || !PlayerSummaries[player].SpawnedThisRound)
@@ -373,11 +397,11 @@ namespace K4ryuuSimpleRanks
 								{
 									case 2:
 										points = CFG.config.DoubleKillPoints;
-										killStreakMessage = "DoubleKill";
+										killStreakMessage = "DoubleK ill";
 										break;
 									case 3:
 										points = CFG.config.TripleKillPoints;
-										killStreakMessage = "TripleKill";
+										killStreakMessage = "Triple Kill";
 										break;
 									case 4:
 										points = CFG.config.DominationPoints;
@@ -389,7 +413,7 @@ namespace K4ryuuSimpleRanks
 										break;
 									case 6:
 										points = CFG.config.MegaKillPoints;
-										killStreakMessage = "MegaKill";
+										killStreakMessage = "Mega Kill";
 										break;
 									case 7:
 										points = CFG.config.OwnagePoints;
@@ -397,15 +421,15 @@ namespace K4ryuuSimpleRanks
 										break;
 									case 8:
 										points = CFG.config.UltraKillPoints;
-										killStreakMessage = "UltraKill";
+										killStreakMessage = "Ultra Kill";
 										break;
 									case 9:
 										points = CFG.config.KillingSpreePoints;
-										killStreakMessage = "KillingSpree";
+										killStreakMessage = "Killing Spree";
 										break;
 									case 10:
 										points = CFG.config.MonsterKillPoints;
-										killStreakMessage = "MonsterKill";
+										killStreakMessage = "Monster Kill";
 										break;
 									case 11:
 										points = CFG.config.UnstoppablePoints;
@@ -413,7 +437,7 @@ namespace K4ryuuSimpleRanks
 										break;
 									case 12:
 										points = CFG.config.GodLikePoints;
-										killStreakMessage = "GodLike";
+										killStreakMessage = "God Like";
 										break;
 									default:
 										// Handle other cases or reset the kill streak
@@ -468,25 +492,6 @@ namespace K4ryuuSimpleRanks
 
 					MySql!.ExecuteNonQueryAsync($"UPDATE `k4ranks` SET `points` = (`points` + {pointChange}) WHERE `steam_id` = {assisterController.SteamID};");
 				}
-
-				return HookResult.Continue;
-			});
-			RegisterEventHandler<EventPlayerSpawn>((@event, info) =>
-			{
-				CCSPlayerController player = @event.Userid;
-
-				if (!player.IsValidPlayer())
-					return HookResult.Continue;
-
-				if (!PlayerSummaries.ContainsPlayer(player!))
-					LoadPlayerData(player!);
-
-				if (CFG.config.DisableSpawnMessage || PlayerSummaries[player].SpawnedThisRound)
-					return HookResult.Continue;
-
-				PlayerSummaries[player].SpawnedThisRound = true;
-
-				player.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.Green}The server is using {ChatColors.Gold}SimpleRanks {ChatColors.Green}plugin. Type {ChatColors.Red}!rank {ChatColors.Green}to get more information!");
 
 				return HookResult.Continue;
 			});
