@@ -261,7 +261,7 @@ namespace K4ryuuSimpleRanks
 				if (!victimController.IsValid)
 					return HookResult.Continue;
 
-				if (!victimController.IsBot)
+				if (!victimController.IsBot && (CFG.config.PointsForBots || !killerController.IsBot))
 				{
 					if (victimController.UserId == killerController.UserId)
 					{
