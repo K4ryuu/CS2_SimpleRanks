@@ -9,7 +9,7 @@ namespace K4ryuuSimpleRanks
 	public partial class SimpleRanks : BasePlugin
 	{
 		public override string ModuleName => "Simple Ranks";
-		public override string ModuleVersion => "v2.1.2";
+		public override string ModuleVersion => "v2.1.3";
 		public override string ModuleAuthor => "K4ryuu";
 
 		public override void Load(bool hotReload)
@@ -19,13 +19,17 @@ namespace K4ryuuSimpleRanks
 			MySql = new MySqlDb(CFG.config.DatabaseHost!, CFG.config.DatabaseUser!, CFG.config.DatabasePassword!, CFG.config.DatabaseName!, CFG.config.DatabasePort);
 			MySql.ExecuteNonQueryAsync(@"CREATE TABLE IF NOT EXISTS `k4ranks` (`id` INT AUTO_INCREMENT PRIMARY KEY, `steam_id` VARCHAR(255) NOT NULL, `name` VARCHAR(255) DEFAULT NULL, `points` INT NOT NULL DEFAULT 0, UNIQUE (`steam_id`));");
 
-			List<CCSPlayerController> players = Utilities.GetPlayers();
-			foreach (CCSPlayerController player in players)
+			if (hotReload)
 			{
-				if (!player.IsValidPlayer())
-					continue;
+				List<CCSPlayerController> players = Utilities.GetPlayers();
 
-				LoadPlayerData(player);
+				foreach (CCSPlayerController player in players)
+				{
+					if (player.IsBot)
+						continue;
+
+					LoadPlayerData(player);
+				}
 			}
 
 			LoadRanksFromConfig();
