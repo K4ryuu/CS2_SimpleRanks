@@ -26,7 +26,6 @@ namespace K4ryuuSimpleRanks
 		public string RankColor { get; set; } = $"{ChatColors.Default}";
 		public int RankPoints { get; set; } = -1;
 		public bool SpawnedThisRound { get; set; } = false;
-		public DateTime LastMessage { get; set; }
 	}
 
 	public class PlayerCache<T> : Dictionary<int, T>
@@ -482,17 +481,12 @@ namespace K4ryuuSimpleRanks
 				if (!PlayerSummaries.ContainsPlayer(player!))
 					LoadPlayerData(player!);
 
-				PlayerSummaries[player].SpawnedThisRound = true;
-
-				if (CFG.config.DisableSpawnMessage || (DateTime.Now - PlayerSummaries[player].LastMessage).TotalMinutes < 1)
+				if (CFG.config.DisableSpawnMessage || PlayerSummaries[player].SpawnedThisRound)
 					return HookResult.Continue;
 
-				PlayerSummaries[player].LastMessage = DateTime.Now;
+				PlayerSummaries[player].SpawnedThisRound = true;
 
-				Server.NextFrame(() =>
-				{
-					player.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.Green}The server is using {ChatColors.Gold}SimpleRanks {ChatColors.Green}plugin. Type {ChatColors.Red}!rank {ChatColors.Green}to get more information!");
-				});
+				player.PrintToChat($" {CFG.config.ChatPrefix} {ChatColors.Green}The server is using {ChatColors.Gold}SimpleRanks {ChatColors.Green}plugin. Type {ChatColors.Red}!rank {ChatColors.Green}to get more information!");
 
 				return HookResult.Continue;
 			});
