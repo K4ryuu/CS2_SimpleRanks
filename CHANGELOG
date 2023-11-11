@@ -1,3 +1,12 @@
+-- 2023. 10. 11 - v2.1.2
+
+- Separated plugin to partial classes and files
+- Added gettings killedd by bot to PointsForBots
+- Fixed spawn message spam
+- Fixed round end points loop
+- Fixed player loops overall
+- Fixed MySQL escaping at playername
+
 -- 2023. 10. 10 - v2.1.0
 
 - Added admin standard to the plugin (admin cmd permissions "@k4ranks/admin")
