@@ -9,6 +9,7 @@ using CounterStrikeSharp.API.Core.Attributes;
 using Nexd.MySQL;
 using System.Reflection;
 using CounterStrikeSharp.API.Modules.Admin;
+using MySqlConnector;
 
 namespace K4ryuuSimpleRanks
 {
@@ -740,11 +741,13 @@ namespace K4ryuuSimpleRanks
 			};
 			PlayerSummaries[player] = newUser;
 
+			string escapedName = MySqlHelper.EscapeString(player.PlayerName);
+
 			MySqlQueryValue values = new MySqlQueryValue()
-										.Add("name", player.PlayerName)
+										.Add("name", escapedName)
 										.Add("steam_id", player.SteamID.ToString());
 
-			MySql!.Table("k4ranks").InsertIfNotExist(values, $"`name` = '{player.PlayerName}'");
+			MySql!.Table("k4ranks").InsertIfNotExist(values, $"`name` = '{escapedName}'");
 
 			MySqlQueryResult result = MySql!.Table("k4ranks").Where(MySqlQueryCondition.New("steam_id", "=", player.SteamID.ToString())).Select("points");
 
